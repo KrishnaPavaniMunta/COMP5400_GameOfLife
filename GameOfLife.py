@@ -13,14 +13,28 @@ def randomGrid(N):
     """returns a grid of NxN random values"""
     return np.random.choice(vals, N*N, p=[0.2, 0.8]).reshape(N, N) 
 
-def addGlider(i, j, grid): 
-    """adds a glider with top left cell at (i, j)"""
-    glider = np.array([[0, 0, 255], 
-                    [255, 0, 255], 
-                    [0, 255, 255]]) 
-    grid[i:i+3, j:j+3] = glider 
+def addPattern(i, j, grid, pattern): 
+    """adds a pattern with top left cell at (i, j)"""
+    pattern_height, pattern_width = pattern.shape
+    grid[i:i+pattern_height, j:j+pattern_width] = pattern
    
-# Add other pattern functions similarly
+# Define various patterns
+glider = np.array([[0, 0, 255], 
+                   [255, 0, 255], 
+                   [0, 255, 255]])
+
+block = np.array([[255, 255],
+                  [255, 255]])
+
+blinker = np.array([[255, 255, 255]])
+
+spaceship = np.array([[0, 0, 255],
+                      [255, 0, 255],
+                      [0, 255, 255]])
+
+r_pentomino = np.array([[0, 255, 255],
+                        [255, 255, 0],
+                        [0, 255, 0]])
 
 def update(frameNum, img, grid, N, text): 
     global generation_count
@@ -69,12 +83,12 @@ def main():
     parser.add_argument('--grid-size', dest='N', required=False) 
     parser.add_argument('--mov-file', dest='movfile', required=False) 
     parser.add_argument('--interval', dest='interval', required=False)
-    parser.add_argument('--glider', action='store_true', required=False)
-    # Add other pattern arguments similarly
+    parser.add_argument('--pattern', dest='pattern', required=False)
+    parser.add_argument('--position', dest='position', required=False, type=int, nargs=2)
     args = parser.parse_args() 
     
     # set grid size 
-    N = 200
+    N = 100
     if args.N and int(args.N) > 8: 
         N = int(args.N) 
         
@@ -84,16 +98,24 @@ def main():
         updateInterval = int(args.interval) 
 
     # declare grid 
-    grid = np.array([]) 
-
-    # check if "glider" demo flag is specified 
-    if args.glider: 
-        grid = np.zeros(N*N).reshape(N, N) 
-        addGlider(1, 1, grid) 
-    # Add other pattern conditions similarly
-
+    grid = np.zeros(N*N).reshape(N, N) 
+    
+    # Add user-specified pattern at position
+    if args.pattern and args.position:
+        if args.pattern == 'glider':
+            addPattern(args.position[0], args.position[1], grid, glider)
+        elif args.pattern == 'block':
+            addPattern(args.position[0], args.position[1], grid, block)
+        elif args.pattern == 'blinker':
+            addPattern(args.position[0], args.position[1], grid, blinker)
+        elif args.pattern == 'spaceship':
+            addPattern(args.position[0], args.position[1], grid, spaceship)
+        elif args.pattern == 'r_pentomino':
+            addPattern(args.position[0], args.position[1], grid, r_pentomino)
+        # Add more patterns as needed
+        
     else: # populate grid with random on/off - 
-            # more off than on 
+        # more off than on 
         grid = randomGrid(N) 
 
     # set up animation 
