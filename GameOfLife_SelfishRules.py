@@ -1,153 +1,128 @@
-import argparse 
-import numpy as np 
-import matplotlib.pyplot as plt 
-import matplotlib.animation as animation 
+import pygame
+import numpy as np
+import time
+import random
 
-ON = 255
-OFF = 0
-vals = [ON, OFF] 
+# Constants
+WIDTH, HEIGHT = 800, 600
+CELL_SIZE = 10
+ROWS = HEIGHT // CELL_SIZE
+COLS = WIDTH // CELL_SIZE
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+GREEN = (0, 255, 0)
+GRAY = (169, 169, 169)
+SELFISHNESS_LEVEL = 0.5  # Adjust the level of selfishness as needed
 
-generation_count = 0
-glider = np.array([[0, 0, 255], 
-                   [255, 0, 255], 
-                   [0, 255, 255]])
+def initialize_grid():
+    return np.zeros((ROWS, COLS))
 
-block = np.array([[255, 255],
-                  [255, 255]])
+def initialize_selfishness():
+    return np.random.rand(ROWS, COLS) < SELFISHNESS_LEVEL
 
-blinker = np.array([[255, 255, 255]])
+def draw_grid(screen, grid, generation):
+    screen.fill(BLACK)
+    for row in range(ROWS):
+        for col in range(COLS):
+            if grid[row][col] == 1:
+                pygame.draw.rect(screen, GREEN, (col * CELL_SIZE, row * CELL_SIZE, CELL_SIZE, CELL_SIZE))
+            else:
+                pygame.draw.rect(screen, GRAY, (col * CELL_SIZE, row * CELL_SIZE, CELL_SIZE, CELL_SIZE), 1)
+    font = pygame.font.Font(None, 36)
+    text = font.render(f"Generation: {generation}", True, WHITE)
+    screen.blit(text, (10, 10))
+    pygame.display.update()
 
-spaceship = np.array([[0, 0, 255],
-                      [255, 0, 255],
-                      [0, 255, 255]])
+def update_grid(grid, generation,selfishness):
+    new_grid = grid.copy()
+    for row in range(ROWS):
+        for col in range(COLS):
+            neighbors = count_neighbors(grid, row, col)
+            vitality = 0  # Initialize vitality factor for selfish chip
+            if grid[row][col] == 1:
+                if neighbors >= 4:  # If a selfish chip is surrounded by 4 or more chips
+                    vitality = 1  # Increment vitality factor by one
+                    kill_neighbors(new_grid, row, col)  # Kill neighbors in clockwise manner
+                elif neighbors <= 1 and selfishness[row][col] > 0:  # If a selfish chip has 0 or 1 neighbor and vitality factor is greater than 0
+                    selfishness[row][col] -= 1  # Decrement vitality by one
+            else:
+                if neighbors == 3 or neighbors == 4:  # Births are allowed at an empty cell if it has 3 or 4 neighbors in its template
+                    new_grid[row][col] = 1
+                    selfishness[row][col] = random.random() < SELFISHNESS_LEVEL  # Randomly designate the new chip as selfish based on selfishness level
+    generation += 1
+    return new_grid, generation
 
-r_pentomino = np.array([[0, 255, 255],
-                        [255, 255, 0],
-                        [0, 255, 0]])
+def kill_neighbors(grid, row, col):
+    directions = [(0, -1), (1, 0), (0, 1), (-1, 0)]  # Clockwise direction: left, down, right, up
+    for dx, dy in directions:
+        while True:
+            new_row, new_col = row + dy, col + dx
+            if 0 <= new_row < ROWS and 0 <= new_col < COLS and grid[new_row][new_col] == 1:
+                grid[new_row][new_col] = 0  # Kill neighbor
+                row, col = new_row, new_col  # Move to the next neighbor
+            else:
+                break 
 
 
-def randomGrid(N): 
-    """returns a grid of NxN random values"""
-    return np.random.choice(vals, N*N, p=[0.2, 0.8]).reshape(N, N) 
 
-def addPattern(i, j, grid, pattern): 
-    """adds a pattern with top left cell at (i, j)"""
-    pattern_height, pattern_width = pattern.shape
-    grid[i:i+pattern_height, j:j+pattern_width] = pattern
+def count_neighbors(grid, row, col):
+    count = 0
+    for i in range(-1, 2):
+        for j in range(-1, 2):
+            if i == 0 and j == 0:
+                continue
+            if (0 <= row + i < ROWS) and (0 <= col + j < COLS):
+                count += grid[row + i][col + j]
+    return count
 
-def selfishBehavior(i, j, grid, N):
-    """Handle selfish behavior of chips"""
-    total = int((grid[i, (j-1)%N] + grid[i, (j+1)%N] +
-                 grid[(i-1)%N, j] + grid[(i+1)%N, j] +
-                 grid[(i-1)%N, (j-1)%N] + grid[(i-1)%N, (j+1)%N] +
-                 grid[(i+1)%N, (j-1)%N] + grid[(i+1)%N, (j+1)%N])/255)
-    
-    vitality = 0  # Vitality factor for selfish chip
-    
-    if total >= 4:  # Chip is surrounded by 4 or more chips
-        vitality = total - 3
-        killNeighborsClockwise(i, j, grid, N, total - 3)
-    elif total <= 1:  # Chip has 0 or 1 neighbor
-        if grid[i, j] == ON and generation_count > vitality:
-            grid[i, j] = OFF
-            generation_count -= 1
-        vitality = 0
-    
-    return vitality
+def main():
+    pygame.init()
+    screen = pygame.display.set_mode((WIDTH, HEIGHT))
+    pygame.display.set_caption("Conway's Game of Life")
 
-def killNeighborsClockwise(i, j, grid, N, num_to_kill):
-    """Kill neighbors in a clockwise manner until num_to_kill neighbors are left"""
-    directions = [(-1, 0), (-1, 1), (0, 1), (1, 1),
-                  (1, 0), (1, -1), (0, -1), (-1, -1)]  # Clockwise directions
-    
-    for direction in directions:
-        if num_to_kill == 0:
-            break
-        
-        dx, dy = direction
-        x, y = i + dx, j + dy
-        
-        if grid[x % N, y % N] == ON:
-            grid[x % N, y % N] = OFF
-            num_to_kill -= 1
+    grid = initialize_grid()
+    selfishness = initialize_selfishness()
+    running = True
+    placing_cells = False
+    simulation_running = False
+    last_update_time = 0
+    update_interval = 0.1  # in seconds
+    generation = 0
 
-def update(frameNum, img, grid, N, text): 
-    global generation_count
-    
-    newGrid = grid.copy() 
-    for i in range(N): 
-        for j in range(N): 
-            if grid[i, j] == ON:
-                vitality = selfishBehavior(i, j, grid, N)
-                
-                total = int((grid[i, (j-1)%N] + grid[i, (j+1)%N] +
-                             grid[(i-1)%N, j] + grid[(i+1)%N, j] +
-                             grid[(i-1)%N, (j-1)%N] + grid[(i-1)%N, (j+1)%N] +
-                             grid[(i+1)%N, (j-1)%N] + grid[(i+1)%N, (j+1)%N])/255)
-                
-                if total < 2 or total > 3: 
-                    newGrid[i, j] = OFF 
-                elif total == 3 or total == 4: 
-                    newGrid[i, j] = ON 
+    while running:
+        current_time = time.time()
 
-    img.set_data(newGrid) 
-    grid[:] = newGrid[:] 
-    generation_count += 1
-    text.set_text("Generation: {}".format(generation_count))
-    return img, text
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    placing_cells = True
+                elif event.button == 3:
+                    placing_cells = False
+            elif event.type == pygame.MOUSEMOTION:
+                if placing_cells:
+                    x, y = event.pos
+                    row = y // CELL_SIZE
+                    col = x // CELL_SIZE
+                    if 0 <= row < ROWS and 0 <= col < COLS:
+                        grid[row][col] = 1
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    simulation_running = not simulation_running
+                elif event.key == pygame.K_c:
+                    placing_cells = not placing_cells
+                elif event.key == pygame.K_r:
+                    grid = initialize_grid()
+                    generation = 0
 
-def main(): 
-    global generation_count
+        if simulation_running and current_time - last_update_time > update_interval:
+            grid, generation = update_grid(grid, generation,selfishness)
+            last_update_time = current_time
 
-    generation_count = 0
-    
-    parser = argparse.ArgumentParser(description="Runs Conway's Game of Life simulation.") 
+        draw_grid(screen, grid, generation)
 
-    parser.add_argument('--grid-size', dest='N', required=False) 
-    parser.add_argument('--mov-file', dest='movfile', required=False) 
-    parser.add_argument('--interval', dest='interval', required=False)
-    parser.add_argument('--pattern', dest='pattern', required=False)
-    parser.add_argument('--position', dest='position', required=False, type=int, nargs=2)
-    args = parser.parse_args() 
-    
-    N = 100
-    if args.N and int(args.N) > 8: 
-        N = int(args.N) 
-        
-    updateInterval = 50
-    if args.interval: 
-        updateInterval = int(args.interval) 
+    pygame.quit()
 
-    grid = np.zeros(N*N).reshape(N, N) 
-    
-    if args.pattern and args.position:
-        if args.pattern == 'glider':
-            addPattern(args.position[0], args.position[1], grid, glider)
-        elif args.pattern == 'block':
-            addPattern(args.position[0], args.position[1], grid, block)
-        elif args.pattern == 'blinker':
-            addPattern(args.position[0], args.position[1], grid, blinker)
-        elif args.pattern == 'spaceship':
-            addPattern(args.position[0], args.position[1], grid, spaceship)
-        elif args.pattern == 'r_pentomino':
-            addPattern(args.position[0], args.position[1], grid, r_pentomino)
-        
-    else: 
-        grid = randomGrid(N) 
-
-    fig, ax = plt.subplots() 
-    img = ax.imshow(grid, interpolation='nearest') 
-    text = ax.text(0.5, 1.05, "", transform=ax.transAxes, ha="center")
-    ani = animation.FuncAnimation(fig, update, fargs=(img, grid, N, text), 
-                                frames = 10, 
-                                interval=updateInterval, 
-                                save_count=50) 
-
-    if args.movfile: 
-        ani.save(args.movfile, fps=30, extra_args=['-vcodec', 'libx264']) 
-
-    plt.show() 
-    print("Total generations:", generation_count)
-
-if __name__ == '__main__': 
-    main() 
+if __name__ == "__main__":
+    main()
