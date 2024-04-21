@@ -3,80 +3,93 @@ import numpy as np
 import matplotlib.pyplot as plt 
 import matplotlib.animation as animation 
 
-# Define cell states
-DEAD = 0
-ALIVE = 1
+ON = 255
+OFF = 0
+vals = [ON, OFF] 
 
-# Define colors
-DEAD_COLOR = 'black'
-ALIVE_COLOR = 'white'
+generation_count = 0
+glider = np.array([[0, 0, 255], 
+                   [255, 0, 255], 
+                   [0, 255, 255]])
 
-# Define probabilities for initial grid
-DEAD_PROBABILITY = 0.2
-ALIVE_PROBABILITY = 0.8
+block = np.array([[255, 255],
+                  [255, 255]])
 
-# Define vitality factor thresholds for selfish cells
-KILL_THRESHOLD = 5
-VITALITY_THRESHOLD = 3
+blinker = np.array([[255, 255, 255]])
 
-# Define rules for births
-BIRTH_RULES = [(3, 1), (4, 0.8)]
+spaceship = np.array([[0, 0, 255],
+                      [255, 0, 255],
+                      [0, 255, 255]])
+
+r_pentomino = np.array([[0, 255, 255],
+                        [255, 255, 0],
+                        [0, 255, 0]])
+
 
 def randomGrid(N): 
-    """Returns a grid of NxN random values"""
-    return np.random.choice([DEAD, ALIVE], N*N, p=[DEAD_PROBABILITY, ALIVE_PROBABILITY]).reshape(N, N) 
+    """returns a grid of NxN random values"""
+    return np.random.choice(vals, N*N, p=[0.2, 0.8]).reshape(N, N) 
 
 def addPattern(i, j, grid, pattern): 
-    """Adds a pattern with top left cell at (i, j)"""
+    """adds a pattern with top left cell at (i, j)"""
     pattern_height, pattern_width = pattern.shape
     grid[i:i+pattern_height, j:j+pattern_width] = pattern
-   
-# Define various patterns
-glider = np.array([[DEAD, DEAD, ALIVE], 
-                   [ALIVE, DEAD, ALIVE], 
-                   [DEAD, ALIVE, ALIVE]])
 
-block = np.array([[ALIVE, ALIVE],
-                  [ALIVE, ALIVE]])
+def selfishBehavior(i, j, grid, N):
+    """Handle selfish behavior of chips"""
+    total = int((grid[i, (j-1)%N] + grid[i, (j+1)%N] +
+                 grid[(i-1)%N, j] + grid[(i+1)%N, j] +
+                 grid[(i-1)%N, (j-1)%N] + grid[(i-1)%N, (j+1)%N] +
+                 grid[(i+1)%N, (j-1)%N] + grid[(i+1)%N, (j+1)%N])/255)
+    
+    vitality = 0  # Vitality factor for selfish chip
+    
+    if total >= 4:  # Chip is surrounded by 4 or more chips
+        vitality = total - 3
+        killNeighborsClockwise(i, j, grid, N, total - 3)
+    elif total <= 1:  # Chip has 0 or 1 neighbor
+        if grid[i, j] == ON and generation_count > vitality:
+            grid[i, j] = OFF
+            generation_count -= 1
+        vitality = 0
+    
+    return vitality
 
-blinker = np.array([[ALIVE, ALIVE, ALIVE]])
-
-spaceship = np.array([[DEAD, DEAD, ALIVE],
-                      [ALIVE, DEAD, ALIVE],
-                      [DEAD, ALIVE, ALIVE]])
-
-r_pentomino = np.array([[DEAD, ALIVE, ALIVE],
-                        [ALIVE, ALIVE, DEAD],
-                        [DEAD, ALIVE, DEAD]])
+def killNeighborsClockwise(i, j, grid, N, num_to_kill):
+    """Kill neighbors in a clockwise manner until num_to_kill neighbors are left"""
+    directions = [(-1, 0), (-1, 1), (0, 1), (1, 1),
+                  (1, 0), (1, -1), (0, -1), (-1, -1)]  # Clockwise directions
+    
+    for direction in directions:
+        if num_to_kill == 0:
+            break
+        
+        dx, dy = direction
+        x, y = i + dx, j + dy
+        
+        if grid[x % N, y % N] == ON:
+            grid[x % N, y % N] = OFF
+            num_to_kill -= 1
 
 def update(frameNum, img, grid, N, text): 
     global generation_count
     
-    # copy grid since we require 8 neighbors 
     newGrid = grid.copy() 
-    
     for i in range(N): 
         for j in range(N): 
-            total = 0
-            for dx in [-1, 0, 1]:
-                for dy in [-1, 0, 1]:
-                    if dx == 0 and dy == 0:
-                        continue
-                    total += grid[(i+dx)%N, (j+dy)%N]  # Apply toroidal boundary conditions
-            
-            # Selfish cell behavior
-            if grid[i, j] == ALIVE:
-                if total > KILL_THRESHOLD:
-                    newGrid[i, j] = DEAD
-                elif total < VITALITY_THRESHOLD:
-                    newGrid[i, j] = ALIVE
-            
-            # Birth rules
-            elif grid[i, j] == DEAD:
-                for rule in BIRTH_RULES:
-                    if total == rule[0] and np.random.random() < rule[1]:
-                        newGrid[i, j] = ALIVE
-            
+            if grid[i, j] == ON:
+                vitality = selfishBehavior(i, j, grid, N)
+                
+                total = int((grid[i, (j-1)%N] + grid[i, (j+1)%N] +
+                             grid[(i-1)%N, j] + grid[(i+1)%N, j] +
+                             grid[(i-1)%N, (j-1)%N] + grid[(i-1)%N, (j+1)%N] +
+                             grid[(i+1)%N, (j-1)%N] + grid[(i+1)%N, (j+1)%N])/255)
+                
+                if total < 2 or total > 3: 
+                    newGrid[i, j] = OFF 
+                elif total == 3 or total == 4: 
+                    newGrid[i, j] = ON 
+
     img.set_data(newGrid) 
     grid[:] = newGrid[:] 
     generation_count += 1
@@ -119,13 +132,12 @@ def main():
         elif args.pattern == 'r_pentomino':
             addPattern(args.position[0], args.position[1], grid, r_pentomino)
         
-    else:
+    else: 
         grid = randomGrid(N) 
 
     fig, ax = plt.subplots() 
-    img = ax.imshow(grid, interpolation='nearest', cmap=plt.get_cmap('binary'), vmin=0, vmax=1) 
-    text = ax.text(0.5, 1.05, "", transform=ax.transAxes, ha="center", color='white')
-    ax.set_facecolor(DEAD_COLOR)
+    img = ax.imshow(grid, interpolation='nearest') 
+    text = ax.text(0.5, 1.05, "", transform=ax.transAxes, ha="center")
     ani = animation.FuncAnimation(fig, update, fargs=(img, grid, N, text), 
                                 frames = 10, 
                                 interval=updateInterval, 
