@@ -1,6 +1,7 @@
 import pygame
 import numpy as np
 import time
+import matplotlib.pyplot as plt
 
 # Constants
 WIDTH, HEIGHT = 800, 600
@@ -32,17 +33,20 @@ def draw_grid(screen, grid, generation):
 
 def update_grid(grid, generation):
     new_grid = grid.copy()
+    alive_cells = 0
     for row in range(ROWS):
         for col in range(COLS):
             neighbors = count_neighbors(grid, row, col)
             if grid[row][col] == 1:
+                alive_cells += 1
                 if neighbors < 2 or neighbors > 3:
                     new_grid[row][col] = 0
             else:
                 if neighbors == 3:
                     new_grid[row][col] = 1
+                    alive_cells += 1
     generation += 1
-    return new_grid, generation
+    return new_grid, generation, alive_cells
 
 def count_neighbors(grid, row, col):
     count = 0
@@ -66,6 +70,7 @@ def main():
     last_update_time = 0
     update_interval = 0.1  # in seconds
     generation = 0
+    alive_cells_array = []
 
     while running:
         current_time = time.time()
@@ -95,10 +100,20 @@ def main():
                     generation = 0
 
         if simulation_running and current_time - last_update_time > update_interval:
-            grid, generation = update_grid(grid, generation)
+            grid, generation, alive_cells = update_grid(grid, generation)
+            alive_cells_array.append(alive_cells)
             last_update_time = current_time
 
         draw_grid(screen, grid, generation)
+
+        if not running:
+            # Plot generations vs. alive_cells_array after the simulation loop
+            plt.plot(range(generation), alive_cells_array)
+            plt.xlabel('Generation')
+            plt.ylabel('Alive Cells')
+            plt.title('Game of Life: Alive Cells Over Generations')
+            plt.grid(True)
+            plt.show()
 
     pygame.quit()
 
