@@ -25,7 +25,9 @@ def draw_grid(screen, grid, generation):
                 pygame.draw.rect(screen, GRAY, (col * CELL_SIZE, row * CELL_SIZE, CELL_SIZE, CELL_SIZE), 1)
     font = pygame.font.Font(None, 36)
     text = font.render(f"Generation: {generation}", True, WHITE)
+    titletext = font.render(f"CONWAY'S GAME OF LIFE", True, WHITE)
     screen.blit(text, (10, 10))
+    screen.blit(titletext, (450, 10))
     pygame.display.update()
 
 def update_grid(grid, generation):

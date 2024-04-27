@@ -30,7 +30,9 @@ def draw_grid(screen, grid, generation):
                 pygame.draw.rect(screen, GRAY, (col * CELL_SIZE, row * CELL_SIZE, CELL_SIZE, CELL_SIZE), 1)
     font = pygame.font.Font(None, 36)
     text = font.render(f"Generation: {generation}", True, WHITE)
+    titletext = font.render(f"CONWAY'S GAME OF LIFE", True, WHITE)
     screen.blit(text, (10, 10))
+    screen.blit(titletext, (450, 10))
     pygame.display.update()
 
 def update_grid(grid, generation,selfishness):
@@ -40,13 +42,15 @@ def update_grid(grid, generation,selfishness):
             neighbors = count_neighbors(grid, row, col)
             vitality = 0  # Initialize vitality factor for selfish chip
             if grid[row][col] == 1:
-                if neighbors >= 4:  # If a selfish chip is surrounded by 4 or more chips
+                if neighbors >= 4 or neighbors <= 6:  # If a selfish chip is surrounded by 4 to 6 neighbours
                     vitality = 1  # Increment vitality factor by one
                     kill_neighbors(new_grid, row, col)  # Kill neighbors in clockwise manner
+                elif neighbors >= 7:
+                    grid[row][col] == 0 #dies of overcrowding irrespective of vitality factor
                 elif neighbors <= 1 and selfishness[row][col] > 0:  # If a selfish chip has 0 or 1 neighbor and vitality factor is greater than 0
                     selfishness[row][col] -= 1  # Decrement vitality by one
             else:
-                if neighbors == 3 or neighbors == 4:  # Births are allowed at an empty cell if it has 3 or 4 neighbors in its template
+                if neighbors == 3:  # Births are allowed at an empty cell if it has 3  neighbors in its template
                     new_grid[row][col] = 1
                     selfishness[row][col] = random.random() < SELFISHNESS_LEVEL  # Randomly designate the new chip as selfish based on selfishness level
     generation += 1
