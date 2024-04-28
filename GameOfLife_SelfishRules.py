@@ -46,11 +46,11 @@ def update_grid(grid, generation,selfishness):
             vitality = 0  # Initialize vitality factor for selfish chip
             if grid[row][col] == 1:
                 alive_cells += 1
-                if neighbors >= 4 or neighbors <= 6:  # If a selfish chip is surrounded by 4 to 6 neighbours
+                if neighbors >= 4:  # If a selfish chip is surrounded by 4 to 6 neighbours
                     vitality = 1  # Increment vitality factor by one
                     kill_neighbors(new_grid, row, col)  # Kill neighbors in clockwise manner
-                elif neighbors >= 7:
-                    grid[row][col] == 0 #dies of overcrowding irrespective of vitality factor
+               #elif neighbors >= 7:
+                  #  grid[row][col] == 0 #dies of overcrowding irrespective of vitality factor
                 elif neighbors <= 1 and selfishness[row][col] > 0:  # If a selfish chip has 0 or 1 neighbor and vitality factor is greater than 0
                     selfishness[row][col] -= 1  # Decrement vitality by one
             else:
