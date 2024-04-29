@@ -43,23 +43,21 @@ def update_grid(grid, generation,selfishness):
     for row in range(ROWS):
         for col in range(COLS):
             neighbors = count_neighbors(grid, row, col)
-            vitality = 0  # Initialize vitality factor for selfish chip
             if grid[row][col] == 1:
                 alive_cells += 1
-                if neighbors >= 4:  # If a selfish chip is surrounded by 4 to 6 neighbours
-                    vitality = 1  # Increment vitality factor by one
-                    kill_neighbors(new_grid, row, col)  # Kill neighbors in clockwise manner
-               #elif neighbors >= 7:
-                  #  grid[row][col] == 0 #dies of overcrowding irrespective of vitality factor
-                elif neighbors <= 1 and selfishness[row][col] > 0:  # If a selfish chip has 0 or 1 neighbor and vitality factor is greater than 0
-                    selfishness[row][col] -= 1  # Decrement vitality by one
+                if neighbors < 2 or neighbors > 3:
+                    # Calculate the probability of cell death
+                    prob_death = random.randint(0,1)
+                    if prob_death:
+                        new_grid[row][col] = 0
             else:
-                if neighbors == 3:  # Births are allowed at an empty cell if it has 3  neighbors in its template
+                if neighbors == 3:
                     new_grid[row][col] = 1
                     alive_cells += 1
-                    selfishness[row][col] = random.random() < SELFISHNESS_LEVEL  # Randomly designate the new chip as selfish based on selfishness level
     generation += 1
     return new_grid, generation, alive_cells
+
+
 
 def kill_neighbors(grid, row, col):
     directions = [(0, -1), (1, 0), (0, 1), (-1, 0)]  # Clockwise direction: left, down, right, up
