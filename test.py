@@ -4,7 +4,6 @@ import time
 import random
 import matplotlib.pyplot as plt
 
-
 # Constants
 WIDTH, HEIGHT = 800, 600
 CELL_SIZE = 10
@@ -14,7 +13,7 @@ BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 GREEN = (0, 255, 0)
 GRAY = (169, 169, 169)
-SELFISHNESS_LEVEL = 0.3  # Adjust the level of selfishness as needed
+SELFISHNESS_LEVEL = 0.5  # Adjust the level of selfishness as needed
 
 def initialize_grid():
     return np.zeros((ROWS, COLS))
@@ -39,28 +38,25 @@ def draw_grid(screen, grid, generation, alive_cells):
     screen.blit(titletext, (450, 10))
     pygame.display.update()
 
-def update_grid(grid, generation,selfishness,alive_cells):
+def update_grid(grid, generation, selfishness, alive_cells):
     new_grid = grid.copy()
-    alive_cells = 0
     for row in range(ROWS):
         for col in range(COLS):
             neighbors = count_neighbors(grid, row, col)
-            vitality = 0  # Initialize vitality factor for selfish chip
-            if grid[row][col] == 1:
-                alive_cells += 1
-                if neighbors >= 4 or neighbors <= 6:  # If a selfish chip is surrounded by 4 to 6 neighbours
-                    vitality = 1  # Increment vitality factor by one
-                    kill_neighbors(new_grid, row, col)  # Kill neighbors in clockwise manner
-                elif neighbors >= 7:
-                    grid[row][col] == 0 #dies of overcrowding irrespective of vitality factor
-                elif neighbors <= 1 and selfishness[row][col] > 0:  # If a selfish chip has 0 or 1 neighbor and vitality factor is greater than 0
-                    selfishness[row][col] -= 1  # Decrement vitality by one
-            else:
-                if neighbors == 3:  # Births are allowed at an empty cell if it has 3  neighbors in its template
+            if grid[row][col] == 1:  # Cell is alive
+                if neighbors >= 4:  # Rule 1
+                    vitality = 1
+                    kill_neighbors(new_grid, row, col)
+                elif neighbors <= 1 and selfishness[row][col] > 0:  # Rule 2
+                    selfishness[row][col] -= 1
+                elif neighbors == 3 or neighbors == 4:  # Rule 3
                     new_grid[row][col] = 1
-                    alive_cells += 1
-                    selfishness[row][col] = random.random() < SELFISHNESS_LEVEL  # Randomly designate the new chip as selfish based on selfishness level
+            else:  # Cell is dead
+                if neighbors == 3 or neighbors == 4:  # Rule 3
+                    new_grid[row][col] = 1
+                    selfishness[row][col] = random.random() < SELFISHNESS_LEVEL  # Rule 4
     generation += 1
+    alive_cells = np.sum(new_grid)
     return new_grid, generation, alive_cells
 
 def kill_neighbors(grid, row, col):
@@ -72,9 +68,7 @@ def kill_neighbors(grid, row, col):
                 grid[new_row][new_col] = 0  # Kill neighbor
                 row, col = new_row, new_col  # Move to the next neighbor
             else:
-                break 
-
-
+                break
 
 def count_neighbors(grid, row, col):
     count = 0
@@ -124,8 +118,6 @@ def main():
                     col = x // CELL_SIZE
                     update_initial_config(grid, row, col)
                     alive_cells = np.sum(grid)  # Update alive cells count
-                    if 0 <= row < ROWS and 0 <= col < COLS:
-                        grid[row][col] = 1
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     simulation_running = not simulation_running
@@ -137,7 +129,7 @@ def main():
                     alive_cells = 0
 
         if simulation_running and current_time - last_update_time > update_interval:
-            grid, generation, alive_cells = update_grid(grid, generation,selfishness,alive_cells)
+            grid, generation, alive_cells = update_grid(grid, generation, selfishness, alive_cells)
             alive_cells_array.append(alive_cells)
             last_update_time = current_time
 
