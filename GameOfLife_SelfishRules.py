@@ -47,8 +47,11 @@ def update_grid(grid, generation, selfishness, alive_cells):
                 if neighbors >= 4:  # Rule 1
                     vitality = 1
                     kill_neighbors(new_grid, row, col)
-                elif neighbors <= 1 and selfishness[row][col] > 0:  # Rule 2
-                    selfishness[row][col] -= 1
+                elif neighbors <= 1:
+                    if selfishness[row][col] > 0:  # Rule 2
+                        selfishness[row][col] -= 1
+                    else:
+                        grid[row][col] = 0
                 elif neighbors == 3 or neighbors == 4:  # Rule 3
                     new_grid[row][col] = 1
             else:  # Cell is dead
