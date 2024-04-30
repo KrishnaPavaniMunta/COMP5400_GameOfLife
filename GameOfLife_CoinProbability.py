@@ -14,13 +14,10 @@ BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 GREEN = (0, 255, 0)
 GRAY = (169, 169, 169)
-SELFISHNESS_LEVEL = 0.3  # Adjust the level of selfishness as needed
 
 def initialize_grid():
     return np.zeros((ROWS, COLS))
 
-def initialize_selfishness():
-    return np.random.rand(ROWS, COLS) < SELFISHNESS_LEVEL
 
 def draw_grid(screen, grid, generation, alive_cells):
     screen.fill(BLACK)
@@ -39,7 +36,7 @@ def draw_grid(screen, grid, generation, alive_cells):
     screen.blit(titletext, (450, 10))
     pygame.display.update()
 
-def update_grid(grid, generation,selfishness,alive_cells):
+def update_grid(grid, generation,alive_cells):
     new_grid = grid.copy()
     alive_cells = 0
     for row in range(ROWS):
@@ -94,7 +91,6 @@ def main():
     pygame.display.set_caption("Conway's Game of Life")
 
     grid = initialize_grid()
-    selfishness = initialize_selfishness()
     running = True
     placing_cells = False
     simulation_running = False
@@ -135,7 +131,7 @@ def main():
                     alive_cells = 0
 
         if simulation_running and current_time - last_update_time > update_interval:
-            grid, generation, alive_cells = update_grid(grid, generation,selfishness,alive_cells)
+            grid, generation, alive_cells = update_grid(grid, generation,alive_cells)
             alive_cells_array.append(alive_cells)
             last_update_time = current_time
 
