@@ -151,6 +151,7 @@ def main():
             plt.show()
 
     pygame.quit()
+    print(alive_cells_array)
 
 if __name__ == "__main__":
     main()
