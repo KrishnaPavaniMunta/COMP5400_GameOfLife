@@ -14,14 +14,9 @@ BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 GREEN = (0, 255, 0)
 GRAY = (169, 169, 169)
-SELFISHNESS_LEVEL = 0.5  # Adjust the level of selfishness as needed
 
 def initialize_grid():
     return np.zeros((ROWS, COLS))
-
-def initialize_selfishness():
-    return np.random.rand(ROWS, COLS) < SELFISHNESS_LEVEL
-
 def draw_grid(screen, grid, generation):
     screen.fill(BLACK)
     for row in range(ROWS):
@@ -37,7 +32,7 @@ def draw_grid(screen, grid, generation):
     screen.blit(titletext, (450, 10))
     pygame.display.update()
 
-def update_grid(grid, generation,selfishness):
+def update_grid(grid, generation):
     new_grid = grid.copy()
     alive_cells = 0
     for row in range(ROWS):
@@ -58,20 +53,6 @@ def update_grid(grid, generation,selfishness):
     return new_grid, generation, alive_cells
 
 
-
-def kill_neighbors(grid, row, col):
-    directions = [(0, -1), (1, 0), (0, 1), (-1, 0)]  # Clockwise direction: left, down, right, up
-    for dx, dy in directions:
-        while True:
-            new_row, new_col = row + dy, col + dx
-            if 0 <= new_row < ROWS and 0 <= new_col < COLS and grid[new_row][new_col] == 1:
-                grid[new_row][new_col] = 0  # Kill neighbor
-                row, col = new_row, new_col  # Move to the next neighbor
-            else:
-                break 
-
-
-
 def count_neighbors(grid, row, col):
     count = 0
     for i in range(-1, 2):
@@ -88,7 +69,6 @@ def main():
     pygame.display.set_caption("Conway's Game of Life")
 
     grid = initialize_grid()
-    selfishness = initialize_selfishness()
     running = True
     placing_cells = False
     simulation_running = False
@@ -125,7 +105,7 @@ def main():
                     generation = 0
 
         if simulation_running and current_time - last_update_time > update_interval:
-            grid, generation, alive_cells = update_grid(grid, generation,selfishness)
+            grid, generation, alive_cells = update_grid(grid, generation)
             alive_cells_array.append(alive_cells)
             last_update_time = current_time
 
