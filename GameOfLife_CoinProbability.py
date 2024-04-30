@@ -59,6 +59,18 @@ def update_grid(grid, generation,selfishness):
 
 
 
+def kill_neighbors(grid, row, col):
+    directions = [(0, -1), (1, 0), (0, 1), (-1, 0)]  # Clockwise direction: left, down, right, up
+    for dx, dy in directions:
+        while True:
+            new_row, new_col = row + dy, col + dx
+            if 0 <= new_row < ROWS and 0 <= new_col < COLS and grid[new_row][new_col] == 1:
+                grid[new_row][new_col] = 0  # Kill neighbor
+                row, col = new_row, new_col  # Move to the next neighbor
+            else:
+                break 
+
+
 
 def count_neighbors(grid, row, col):
     count = 0
