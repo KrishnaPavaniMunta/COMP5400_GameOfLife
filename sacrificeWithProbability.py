@@ -3,6 +3,7 @@ import numpy as np
 import time
 import matplotlib.pyplot as plt
 import csv
+import random
 
 # Constants
 WIDTH, HEIGHT = 800, 600
@@ -44,7 +45,10 @@ def update_grid(grid, generation, alive_cells):
             if grid[row][col] == 1:
                 alive_cells +=1
                 if neighbors < 2 or neighbors > 3:
-                    new_grid[row][col] = 0  # Die if fewer than 2 or more than 3 neighbors
+                     # Calculate the probability of cell death
+                    prob_death = random.randint(0,1)
+                    if prob_death:
+                        new_grid[row][col] = 0  
                 if neighbors == n:
                     new_grid[row][col] = 0  # Sacrifice if exactly n neighbors
             else:
