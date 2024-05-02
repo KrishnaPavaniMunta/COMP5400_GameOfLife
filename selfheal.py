@@ -13,7 +13,7 @@ BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 GREEN = (0, 255, 0)
 GRAY = (169, 169, 169)
-n = 5 #change the number here to experiment 
+n = 5  # change the number here to experiment
 
 def initialize_grid():
     return np.zeros((ROWS, COLS))
@@ -28,7 +28,7 @@ def draw_grid(screen, grid, generation, alive_cells):
                 pygame.draw.rect(screen, GRAY, (col * CELL_SIZE, row * CELL_SIZE, CELL_SIZE, CELL_SIZE), 1)
     font = pygame.font.Font(None, 36)
     text = font.render(f"Generation: {generation}", True, WHITE)
-    alive_cells_text = font.render(f"Alive Cells: {alive_cells}", True, WHITE) 
+    alive_cells_text = font.render(f"Alive Cells: {alive_cells}", True, WHITE)
     titletext = font.render(f"CONWAY'S GAME OF LIFE", True, WHITE)
     screen.blit(text, (10, 10))
     screen.blit(alive_cells_text, (10, 50))
@@ -42,9 +42,9 @@ def update_grid(grid, generation, alive_cells):
         for col in range(COLS):
             neighbors = count_neighbors(grid, row, col)
             if grid[row][col] == 1:
-                alive_cells +=1
-                if neighbors < 2 or neighbors > 3:
-                    new_grid[row][col] = 0  # Die if fewer than 2 or more than 3 neighbors
+                alive_cells += 1
+                # if neighbors < 2 or neighbors > 3:
+                # new_grid[row][col] = 0  # Die if fewer than 2 or more than 3 neighbors
                 if neighbors == n:
                     new_grid[row][col] = 0  # Sacrifice if exactly n neighbors
             else:
@@ -54,7 +54,6 @@ def update_grid(grid, generation, alive_cells):
     generation += 1
     alive_cells = np.sum(new_grid)
     return new_grid, generation, alive_cells
-
 
 def count_neighbors(grid, row, col):
     count = 0
@@ -70,6 +69,10 @@ def update_initial_config(grid, row, col):
     if 0 <= row < ROWS and 0 <= col < COLS:
         grid[row][col] = 1
 
+def erase_cells(grid, row, col):
+    if 0 <= row < ROWS and 0 <= col < COLS:
+        grid[row][col] = 0
+
 def main():
     pygame.init()
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -78,6 +81,7 @@ def main():
     grid = initialize_grid()
     running = True
     placing_cells = False
+    erasing_cells = False
     simulation_running = False
     last_update_time = 0
     update_interval = 0.1  # in seconds
@@ -94,6 +98,9 @@ def main():
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     placing_cells = True
+                elif event.button == 2:  # Middle mouse button for erasing cells
+                    placing_cells = False  # Stop placing cells if we were doing so
+                    erasing_cells = True
                 elif event.button == 3:
                     placing_cells = False
             elif event.type == pygame.MOUSEMOTION:
@@ -101,10 +108,17 @@ def main():
                     x, y = event.pos
                     row = y // CELL_SIZE
                     col = x // CELL_SIZE
-                    update_initial_config(grid,row,col)
+                    update_initial_config(grid, row, col)
                     alive_cells = np.sum(grid)
-                    if 0 <= row < ROWS and 0 <= col < COLS:
-                        grid[row][col] = 1
+                elif erasing_cells:
+                    x, y = event.pos
+                    row = y // CELL_SIZE
+                    col = x // CELL_SIZE
+                    erase_cells(grid, row, col)
+                    alive_cells = np.sum(grid)
+            elif event.type == pygame.MOUSEBUTTONUP:
+                if event.button == 2:
+                    erasing_cells = False
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     simulation_running = not simulation_running
@@ -116,11 +130,12 @@ def main():
                     alive_cells = 0
 
         if simulation_running and current_time - last_update_time > update_interval:
-            grid, generation, alive_cells = update_grid(grid, generation,alive_cells)
+            grid, generation, alive_cells = update_grid(grid, generation, alive_cells)
             alive_cells_array.append(alive_cells)
             last_update_time = current_time
 
         draw_grid(screen, grid, generation, alive_cells)
+
         if not running:
             # Plot generations vs. alive_cells_array after the simulation loop
             plt.plot(range(generation), alive_cells_array)
@@ -131,9 +146,9 @@ def main():
             plt.show()
 
     pygame.quit()
-    
-    with open('AliveCells.csv', 'w', newline = '') as csvfile:
-        my_writer = csv.writer(csvfile, delimiter = ' ')
+
+    with open('AliveCells.csv', 'w', newline='') as csvfile:
+        my_writer = csv.writer(csvfile, delimiter=' ')
         my_writer.writerow(alive_cells_array)
 
 if __name__ == "__main__":

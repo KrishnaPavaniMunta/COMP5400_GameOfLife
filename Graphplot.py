@@ -11,7 +11,8 @@ for file_index in range(1, 9):  # Assuming your files are named file1.csv, file2
         data = []
         for line in textfile:
             row_data = line.strip("\n").split(',')
-            row_data = [float(item) for item in row_data]  # Convert all items in the row to float
+            # Convert non-empty items in the row to float
+            row_data = [float(item) if item else np.nan for item in row_data]
             data.append(row_data)
         all_data.append(data)
 
@@ -19,7 +20,7 @@ for file_index in range(1, 9):  # Assuming your files are named file1.csv, file2
 all_data = np.array(all_data)
 
 # Generate x values (assuming each file has the same length)
-generation = 500
+generation = np.arange(1000)
 
 # Define colors for the plot
 colors = ['blue', 'green', 'red', 'purple', 'orange', 'cyan', 'magenta', 'yellow']
