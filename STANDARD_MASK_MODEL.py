@@ -2,10 +2,19 @@ import pygame
 import numpy as np
 import time
 import matplotlib.pyplot as plt
-import csv
 import random
 
-Pdeath = 0.3
+# Define the weight matrix W
+W = np.array([[1, 1, 1],
+              [1, 0, 1],
+              [1, 1, 1]])
+
+# Define the probability of cell death
+PdeathMin = 0.3  # Adjust as needed
+PdeathMax = 1
+
+
+
 # Constants
 WIDTH, HEIGHT = 800, 600
 CELL_SIZE = 10
@@ -15,7 +24,6 @@ BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 GREEN = (0, 255, 0)
 GRAY = (169, 169, 169)
-
 
 def initialize_grid():
     return np.zeros((ROWS, COLS))
@@ -30,11 +38,11 @@ def draw_grid(screen, grid, generation, alive_cells):
                 pygame.draw.rect(screen, GRAY, (col * CELL_SIZE, row * CELL_SIZE, CELL_SIZE, CELL_SIZE), 1)
     font = pygame.font.Font(None, 36)
     text = font.render(f"Generation: {generation}", True, WHITE)
-    alive_cells_text = font.render(f"Alive Cells: {alive_cells}", True, WHITE)
     titletext = font.render(f"CONWAY'S GAME OF LIFE", True, WHITE)
+    alive_cells_text = font.render(f"Alive Cells: {alive_cells}", True, WHITE) 
     screen.blit(text, (10, 10))
-    screen.blit(alive_cells_text, (10, 50))
     screen.blit(titletext, (450, 10))
+    screen.blit(alive_cells_text, (10, 50))
     pygame.display.update()
 
 def update_grid(grid, generation, alive_cells):
@@ -42,18 +50,23 @@ def update_grid(grid, generation, alive_cells):
     alive_cells = 0
     for row in range(ROWS):
         for col in range(COLS):
-            neighbors = count_neighbors(grid, row, col)
-            if grid[row][col] == 1:
-                # Apply stochastic death
-                if random.random() < Pdeath or neighbors < 2 or neighbors > 3:
-                    new_grid[row][col] = 0
-            else:
-                # Stochastic birth
-                if neighbors == 3 and random.random() > Pdeath:
-                    new_grid[row][col] = 1
+             # Create a slice of the grid for counting neighbors
+            neighbor_slice = grid[max(0, row-1):min(ROWS, row+2), max(0, col-1):min(COLS, col+2)]
+            # Apply weighted summation using the slice and the weight matrix
+            neighbor_sum = np.sum(np.multiply(W[:neighbor_slice.shape[0], :neighbor_slice.shape[1]], neighbor_slice))
+            # Apply stochastic cell death
+            Pdeath = random.uniform(0,1)
+            if grid[row][col] == 1 and PdeathMin == 1 and (neighbor_sum < 2 or neighbor_sum > 3):
+                new_grid[row][col] = 0
+
+            elif grid[row][col] == 1 and Pdeath  <= PdeathMax and Pdeath >= PdeathMin and (neighbor_sum < 2 or neighbor_sum > 3):
+                new_grid[row][col] = 0
+            elif grid[row][col] == 0 and neighbor_sum == 3:
+                new_grid[row][col] = 1
     generation += 1
     alive_cells = np.sum(new_grid)
     return new_grid, generation, alive_cells
+            
 
 def count_neighbors(grid, row, col):
     count = 0
@@ -69,10 +82,6 @@ def update_initial_config(grid, row, col):
     if 0 <= row < ROWS and 0 <= col < COLS:
         grid[row][col] = 1
 
-def erase_cells(grid, row, col):
-    if 0 <= row < ROWS and 0 <= col < COLS:
-        grid[row][col] = 0
-
 def main():
     pygame.init()
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -81,7 +90,6 @@ def main():
     grid = initialize_grid()
     running = True
     placing_cells = False
-    erasing_cells = False
     simulation_running = False
     last_update_time = 0
     update_interval = 0.1  # in seconds
@@ -98,9 +106,6 @@ def main():
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     placing_cells = True
-                elif event.button == 2:  # Middle mouse button for erasing cells
-                    placing_cells = False  # Stop placing cells if we were doing so
-                    erasing_cells = True
                 elif event.button == 3:
                     placing_cells = False
             elif event.type == pygame.MOUSEMOTION:
@@ -108,17 +113,10 @@ def main():
                     x, y = event.pos
                     row = y // CELL_SIZE
                     col = x // CELL_SIZE
-                    update_initial_config(grid, row, col)
+                    update_initial_config(grid,row,col)
                     alive_cells = np.sum(grid)
-                elif erasing_cells:
-                    x, y = event.pos
-                    row = y // CELL_SIZE
-                    col = x // CELL_SIZE
-                    erase_cells(grid, row, col)
-                    alive_cells = np.sum(grid)
-            elif event.type == pygame.MOUSEBUTTONUP:
-                if event.button == 2:
-                    erasing_cells = False
+                    if 0 <= row < ROWS and 0 <= col < COLS:
+                        grid[row][col] = 1
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     simulation_running = not simulation_running
@@ -146,10 +144,6 @@ def main():
             plt.show()
 
     pygame.quit()
-
-    with open('AliveCells.csv', 'w', newline='') as csvfile:
-        my_writer = csv.writer(csvfile, delimiter=' ')
-        my_writer.writerow(alive_cells_array)
 
 if __name__ == "__main__":
     main()

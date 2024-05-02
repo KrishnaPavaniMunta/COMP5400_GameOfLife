@@ -130,16 +130,16 @@ def main():
                     alive_cells = 0
 
         if simulation_running and current_time - last_update_time > update_interval:
-            grid, generation, alive_cells = update_grid(grid, generation, alive_cells, Pdeath_slider[2])
-            alive_cells_array.append(alive_cells)
+            # grid, generation, alive_cells = update_grid(grid, generation, alive_cells, Pdeath_slider[2])
+            #alive_cells_array.append(alive_cells)
             last_update_time = current_time
             # Handle events
         for event in pygame.event.get():
             handle_slider_event(event, Pdeath_slider)
 
-        #if simulation_running:
-        #    grid, generation, alive_cells = update_grid(grid, generation, alive_cells, Pdeath_slider[2])
-
+        if simulation_running:
+            grid, generation, alive_cells = update_grid(grid, generation, alive_cells, Pdeath_slider[2])
+            alive_cells_array.append(alive_cells)
         draw_grid(screen, grid, generation, alive_cells)
         draw_slider(screen, Pdeath_slider, "Pdeath")
         pygame.display.update()

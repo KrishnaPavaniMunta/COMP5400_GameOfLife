@@ -3,6 +3,7 @@ import numpy as np
 import time
 import matplotlib.pyplot as plt
 
+
 # Constants
 WIDTH, HEIGHT = 800, 600
 CELL_SIZE = 10
