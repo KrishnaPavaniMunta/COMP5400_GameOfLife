@@ -30,9 +30,9 @@ def draw_grid(screen, grid, generation, alive_cells):
             else:
                 pygame.draw.rect(screen, GRAY, (col * CELL_SIZE, row * CELL_SIZE, CELL_SIZE, CELL_SIZE), 1)
     font = pygame.font.Font(None, 36)
-    text = font.render(f"Generation: {generation}", True, WHITE)
-    alive_cells_text = font.render(f"Alive Cells: {alive_cells}", True, WHITE) 
+    text = font.render(f"Generation: {generation}", True, WHITE) 
     titletext = font.render(f"CONWAY'S GAME OF LIFE", True, WHITE)
+    alive_cells_text = font.render(f"Alive Cells: {alive_cells}", True, WHITE) 
     screen.blit(text, (10, 10))
     screen.blit(alive_cells_text, (10, 50))
     screen.blit(titletext, (450, 10))
@@ -40,6 +40,7 @@ def draw_grid(screen, grid, generation, alive_cells):
 
 def update_grid(grid, generation, selfishness, alive_cells):
     new_grid = grid.copy()
+    alive_cells = 0
     for row in range(ROWS):
         for col in range(COLS):
             neighbors = count_neighbors(grid, row, col)
@@ -148,6 +149,10 @@ def main():
             plt.show()
 
     pygame.quit()
+
+    with open('AliveCells.csv', 'w', newline = '') as csvfile:
+        my_writer = csv.writer(csvfile, delimiter = ' ')
+        my_writer.writerow(alive_cells_array)
 
 if __name__ == "__main__":
     main()
