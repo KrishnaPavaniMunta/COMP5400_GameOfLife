@@ -1,7 +1,19 @@
 
-# Conway's Game of Life
+# Conway's Game of Life and its extended implementations
 
 Conway's Game of Life is a cellular automaton devised by the British mathematician John Horton Conway in 1970. It is a zero-player game, meaning that its evolution is determined by its initial state, requiring no further input. One interacts with the Game of Life by creating an initial configuration and observing how it evolves.
+
+# AIM
+To analyse to the emergent behaviour of cells (such as optimization of population, difference in cell properties), when the initial rules are changed to non deterministic rules and deepen our understanding in cellular automata.
+
+# File structure
+| File | Purpose |
+| ---  | --- |
+| `GameOfLife_CustomPlace.py`  |  Original game of life  |
+| `GameOfLife_SelfishRules.py`  |  Rules are changed such that the cells behave selfishly with a percentage of selfishness |
+| `GameOfLife_SacrificeRules.py`  |  Rules are changed such that the cells will show sacrifice behaviour |
+| `stochastic_GOL.py` | Rules are changed such that cells exhibit self healing and self controlled growth properties |
+
 
 ## Installation
 
