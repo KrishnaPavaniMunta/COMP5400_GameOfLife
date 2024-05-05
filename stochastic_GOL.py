@@ -26,10 +26,10 @@ masks = {
     'Hex2': np.array([[1, 0.75, 0.5], [0.75, 0, 0.75], [0.5, 0.75, 1]])
 }
 
-current_mask_name = 'Standard'
+current_mask_name = 'Isotropic'
 current_mask = masks[current_mask_name]
 # Define the specific probability of cell death
-Pdeath = 1  # Specific probability
+Pdeath = 0.25  # Specific probability
 
 def initialize_grid():
     return np.zeros((ROWS, COLS))

@@ -13,7 +13,7 @@ BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 GREEN = (0, 255, 0)
 GRAY = (169, 169, 169)
-n = 5 #change the number here to experiment 
+n = int(input("Please input neighbours required for sacrifice (1-8):")) #change the number here to experiment 
 
 def initialize_grid():
     return np.zeros((ROWS, COLS))
