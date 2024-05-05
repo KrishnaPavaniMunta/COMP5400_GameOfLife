@@ -3,6 +3,7 @@ import numpy as np
 import time
 import matplotlib.pyplot as plt
 import csv
+import random
 
 # Constants
 WIDTH, HEIGHT = 800, 600
@@ -13,7 +14,7 @@ BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 GREEN = (0, 255, 0)
 GRAY = (169, 169, 169)
-n = 5 #change the number here to experiment 
+n = 6 #change the number here to experiment 
 
 def initialize_grid():
     return np.zeros((ROWS, COLS))
@@ -38,6 +39,8 @@ def draw_grid(screen, grid, generation, alive_cells):
 def update_grid(grid, generation, alive_cells):
     new_grid = grid.copy()
     alive_cells = 0
+    live_cells = [(x, y) for x in range(grid.shape[1]) for y in range(grid.shape[0]) if grid[y, x] == 1]
+    random.shuffle(live_cells)  # Shuffle the order of live cell coordinates
     for row in range(ROWS):
         for col in range(COLS):
             neighbors = count_neighbors(grid, row, col)
