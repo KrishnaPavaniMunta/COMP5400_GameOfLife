@@ -25,8 +25,8 @@ masks = {
     'Hex1': np.array([[0.75, 0.5, 0.75], [1, 0, 1], [0.75, 0.5, 0.75]]),
     'Hex2': np.array([[1, 0.75, 0.5], [0.75, 0, 0.75], [0.5, 0.75, 1]])
 }
-
-current_mask_name = 'Isotropic'
+print("")
+current_mask_name = input("Please select the mask ")
 current_mask = masks[current_mask_name]
 # Define the specific probability of cell death
 Pdeath = 0.25  # Specific probability
