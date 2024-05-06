@@ -1,8 +1,6 @@
 import pygame
 import numpy as np
 import time
-import matplotlib.pyplot as plt
-
 
 # Constants
 WIDTH, HEIGHT = 800, 600
@@ -15,6 +13,9 @@ GREEN = (0, 255, 0)
 GRAY = (169, 169, 169)
 
 def initialize_grid():
+    return np.zeros((ROWS, COLS))
+
+def initialize_age_grid():
     return np.zeros((ROWS, COLS))
 
 def draw_grid(screen, grid, generation, alive_cells):
@@ -34,23 +35,26 @@ def draw_grid(screen, grid, generation, alive_cells):
     screen.blit(alive_cells_text, (10, 50))
     pygame.display.update()
 
-def update_grid(grid, generation, alive_cells):
+def update_grid(grid, generation, alive_cells, age_grid):
     new_grid = grid.copy()
-    alive_cells = 0
+    new_age_grid = age_grid.copy()
+    lifespans = []
     for row in range(ROWS):
         for col in range(COLS):
             neighbors = count_neighbors(grid, row, col)
             if grid[row][col] == 1:
-                alive_cells += 1
                 if neighbors < 2 or neighbors > 3:
+                    lifespans.append(age_grid[row][col])
                     new_grid[row][col] = 0
+                    new_age_grid[row][col] = 0
+                else:
+                    new_age_grid[row][col] += 1
             else:
                 if neighbors == 3:
                     new_grid[row][col] = 1
-                    alive_cells += 1
+                    new_age_grid[row][col] = 1
     generation += 1
-    alive_cells = np.sum(new_grid)
-    return new_grid, generation, alive_cells
+    return new_grid, new_age_grid, generation, np.sum(new_grid), lifespans
 
 def count_neighbors(grid, row, col):
     count = 0
@@ -72,14 +76,15 @@ def main():
     pygame.display.set_caption("Conway's Game of Life")
 
     grid = initialize_grid()
+    age_grid = initialize_age_grid()
     running = True
     placing_cells = False
     simulation_running = False
-    last_update_time = 0
+    last_update_time = time.time()
     update_interval = 0.1  # in seconds
     generation = 0
     alive_cells = 0
-    alive_cells_array = []
+    all_lifespans = []
 
     while running:
         current_time = time.time()
@@ -97,10 +102,8 @@ def main():
                     x, y = event.pos
                     row = y // CELL_SIZE
                     col = x // CELL_SIZE
-                    update_initial_config(grid,row,col)
-                    alive_cells = np.sum(grid)
-                    if 0 <= row < ROWS and 0 <= col < COLS:
-                        grid[row][col] = 1
+                    update_initial_config(grid, row, col)
+                    alive_cells = np.sum(grid)  # Update alive cells count
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     simulation_running = not simulation_running
@@ -111,23 +114,18 @@ def main():
                     generation = 0
                     alive_cells = 0
 
-        if simulation_running and current_time - last_update_time > update_interval:
-            grid, generation, alive_cells = update_grid(grid, generation, alive_cells)
-            alive_cells_array.append(alive_cells)
+        if simulation_running and (current_time - last_update_time > update_interval):
+            grid, age_grid, generation, alive_cells, lifespans = update_grid(grid, generation, alive_cells, age_grid)
+            all_lifespans.extend(lifespans)
             last_update_time = current_time
 
         draw_grid(screen, grid, generation, alive_cells)
 
-        if not running:
-            # Plot generations vs. alive_cells_array after the simulation loop
-            plt.plot(range(generation), alive_cells_array)
-            plt.xlabel('Generation')
-            plt.ylabel('Alive Cells')
-            plt.title('Game of Life: Alive Cells Over Generations')
-            plt.grid(True)
-            plt.show()
-
     pygame.quit()
+
+    if all_lifespans:
+        average_lifespan = np.mean(all_lifespans)
+        print("Average Lifespan of Cells:", average_lifespan)
 
 if __name__ == "__main__":
     main()

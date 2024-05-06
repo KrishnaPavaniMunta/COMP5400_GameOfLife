@@ -13,10 +13,11 @@ BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 GREEN = (0, 255, 0)
 GRAY = (169, 169, 169)
-SELFISHNESS_LEVEL = 0.5  # Adjust the level of selfishness as needed
+SELFISHNESS_LEVEL = 0.05  # Adjust the level of selfishness as needed
 
 def initialize_grid():
     return np.zeros((ROWS, COLS))
+
 
 def initialize_selfishness():
     return np.random.rand(ROWS, COLS) < SELFISHNESS_LEVEL
@@ -41,16 +42,20 @@ def draw_grid(screen, grid, generation, alive_cells):
 def update_grid(grid, generation, selfishness, alive_cells):
     new_grid = grid.copy()
     alive_cells = 0
+    new_age_grid = new_grid.copy()
+    lifespans = []
     for row in range(ROWS):
         for col in range(COLS):
             neighbors = count_neighbors(grid, row, col)
             if grid[row][col] == 1:  # Cell is alive
                 if neighbors >= 4:  # Rule 1
-                    vitality = 1
+                    selfishness[row][col] += 1
                     kill_neighbors(new_grid, row, col)
+                    new_age_grid[row][col] += 1
                 elif neighbors <= 1:
                     if selfishness[row][col] > 0:  # Rule 2
                         selfishness[row][col] -= 1
+                        new_age_grid[row][col] += 1
                     else:
                         grid[row][col] = 0
                 elif neighbors == 3 or neighbors == 4:  # Rule 3
