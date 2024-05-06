@@ -1,7 +1,42 @@
-
-# Conway's Game of Life
+# Conway's Game of Life and its extended implementations
 
 Conway's Game of Life is a cellular automaton devised by the British mathematician John Horton Conway in 1970. It is a zero-player game, meaning that its evolution is determined by its initial state, requiring no further input. One interacts with the Game of Life by creating an initial configuration and observing how it evolves.
+
+## Aim
+
+The aim of this project is to analyze the emergent behavior of cells when the initial rules of Conway's Game of Life are modified. By changing the rules to non-deterministic ones and introducing new behaviors such as selfishness, sacrifice, and stochastic growth, we aim to deepen our understanding of cellular automata.
+
+## File Structure
+
+| File                       | Purpose                                                         |
+|----------------------------|-----------------------------------------------------------------|
+| `GameOfLife_CustomPlace.py`| Original Game of Life implementation with custom cell placement|
+| `GameOfLife_SelfishRules.py`| Implementation where cells exhibit selfish behavior           |
+| `GameOfLife_SacrificeRules.py`| Implementation where cells exhibit sacrifice behavior         |
+| `stochastic_GOL.py`       | Implementation with stochastic growth properties               |
+
+## How to Play
+
+### Game of Life (Original)
+- Run `GameOfLife_CustomPlace.py`.
+- Left-click to place live cells, right-click to remove.
+- Press spacebar to start/stop the simulation.
+- Press 'r' to reset the grid.
+
+### Selfish Rules
+- Run `GameOfLife_SelfishRules.py`.
+- The cells exhibit selfish behavior with a specified level of selfishness.
+- Specify the level of selfishness when prompted.
+
+### Sacrifice Rules
+- Run `GameOfLife_SacrificeRules.py`.
+- The cells exhibit sacrifice behavior where they sacrifice themselves if they have a certain number of neighbors.
+- Specify the number of neighbors for sacrifice when prompted.
+
+### Stochastic Growth
+- Run `stochastic_GOL.py`.
+- Cells exhibit self-healing and self-controlled growth properties.
+- Specify the probability of cell death when prompted.
 
 ## Installation
 
@@ -17,53 +52,45 @@ Conway's Game of Life is a cellular automaton devised by the British mathematici
     cd GameOfLife
     ```
 
-3. Install dependencies:
+3. Run the desired implementation file as mentioned above.
 
-    ```bash
-    pip install -r requirements.txt
-    ```
 
-## Usage
+### Dependencies
 
-### Running the simulation
+The main dependencies for running the various versions of Conway's Game of Life are:
 
-To run the simulation with random organisms:
+1. **Python**: Python is the primary programming language used for implementing the game and its variations. Ensure you have Python installed on your system. You can download it from the [official Python website](https://www.python.org/downloads/).
 
-```bash
-python GameOfLife.py
-```
+2. **pygame**: Pygame is a cross-platform set of Python modules designed for writing video games. It includes computer graphics and sound libraries. To install pygame, you can use pip, Python's package manager.
 
-To place a specific pattern at a custom position, use the following format:
+3. **numpy**: Numpy is a fundamental package for scientific computing with Python. It provides support for large, multi-dimensional arrays and matrices, along with a collection of mathematical functions to operate on these arrays. Install numpy using pip.
 
-```bash
-python GameOfLife.py --pattern PATTERN --position X Y
-```
+4. **matplotlib**: Matplotlib is a comprehensive library for creating static, animated, and interactive visualizations in Python. It is used for plotting the generation vs. alive cells graph. Install matplotlib using pip.
 
-Replace `PATTERN` with the name of the pattern (e.g., `glider`, `still_life_block`) and `X` and `Y` with the coordinates to place the organism.
+5. **csv** (optional): The csv module is used for reading and writing CSV files. It is used in one of the implementations to save data to a CSV file.
 
-### Available Patterns
+### Installation Instructions
 
-1. Glider
-2. Still Life Block
-3. Oscillator Blinker
-4. Spaceship Glider
-5. Methuselah R-pentomino
-
-## Examples
-
-To run a glider pattern at position (10, 10):
+You can install the dependencies using pip, which is the package installer for Python. Open your terminal or command prompt and execute the following commands:
 
 ```bash
-python GameOfLife.py --pattern glider --position 10 10
+pip install pygame numpy matplotlib
 ```
 
-To run a still life block at position (5, 5):
+If you choose to run the version that utilizes the `csv` module, you can install it with:
 
 ```bash
-python GameOfLife.py --pattern still_life_block --position 5 5
+pip install csv
 ```
 
-## Contributing
+These commands will install all the necessary dependencies required to run Conway's Game of Life and its extended implementations.
 
-Contributions are welcome! Please feel free to open issues or submit pull requests.
+Once the dependencies are installed, you can run each version of the game by executing the corresponding Python script. For example:
 
+```bash
+python GameOfLife_CustomPlace.py
+```
+
+Ensure that you are in the correct directory where the Python scripts are located when running the commands. With the dependencies installed, you should be able to enjoy exploring the different implementations of Conway's Game of Life!
+
+Enjoy exploring the various behaviors of cellular automata in Conway's Game of Life!
