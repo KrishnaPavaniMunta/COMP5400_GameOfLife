@@ -14,6 +14,7 @@ WHITE = (255, 255, 255)
 GREEN = (0, 255, 0)
 GRAY = (169, 169, 169)
 
+
 masks = {
     'Standard': np.array([[1, 1, 1], [1, 0, 1], [1, 1, 1]]),
     'Isotropic': np.array([[0.7, 1, 0.7], [1, 0, 1], [0.7, 1, 0.7]]),
@@ -25,14 +26,10 @@ masks = {
     'Hex1': np.array([[0.75, 0.5, 0.75], [1, 0, 1], [0.75, 0.5, 0.75]]),
     'Hex2': np.array([[1, 0.75, 0.5], [0.75, 0, 0.75], [0.5, 0.75, 1]])
 }
-print("Available masks:", end = "")
-print("Standard, Isotropic, IsotropicDiag", end = "")
-print("Cross, Cross4, Cross4Diag", end = "")
-print("Hex0, Hex1, Hex2",end ="")
-current_mask_name = input("Please input mask name: ")
-current_mask = masks[current_mask_name]
+
+
 # Define the specific probability of cell death
-Pdeath = float(input("Please input the probability (0-1): "))  # Specific probability
+Pdeath = 0.2  # Specific probability
 
 def initialize_grid():
     return np.zeros((ROWS, COLS))
@@ -47,8 +44,8 @@ def draw_grid(screen, grid, generation, alive_cells):
                 pygame.draw.rect(screen, GRAY, (col * CELL_SIZE, row * CELL_SIZE, CELL_SIZE, CELL_SIZE), 1)
     font = pygame.font.Font(None, 36)
     text = font.render(f"Generation: {generation}", True, WHITE)
-    mask_text = font.render(f"Current Mask: {current_mask_name}", True, WHITE)
     alive_cells_text = font.render(f"Alive Cells: {alive_cells}", True, WHITE)
+    mask_text = font.render(f"Current Mask: {current_mask_name}", True, WHITE)
     titletext = font.render(f"CONWAY'S GAME OF LIFE", True, WHITE)
     screen.blit(text, (10, 10))
     screen.blit(alive_cells_text, (10, 40))
@@ -72,7 +69,7 @@ def update_grid(grid, generation, alive_cells):
     deaths = random.sample(cells_to_die, expected_deaths) if expected_deaths < num_cells_to_die else cells_to_die
 
     for row, col in np.ndindex(grid.shape):
-        neighbors = count_neighbors(grid, row, col,current_mask)
+        neighbors = count_neighbors(grid, row, col, current_mask)
         if (row, col) in deaths:
             new_grid[row, col] = 0
         elif grid[row, col] == 0 and neighbors == 3:
@@ -101,8 +98,26 @@ def count_neighbors(grid, row, col, mask):
 
     # Return the sum rounded to the nearest integer
     return int(np.ceil(total))
-    
-  
+'''
+def count_neighbors(grid, row, col):
+    count = 0
+    for i in range(-1, 2):
+        for j in range(-1, 2):
+            if i == 0 and j == 0:
+                continue
+            if (0 <= row + i < ROWS) and (0 <= col + j < COLS):
+                count += grid[row + i][col + j]
+    return count
+'''
+'''
+def count_neighbors(grid, row, col):
+    neigh_matrix = grid[max(0, row-1):row+2, max(0, col-1):col+2]
+    weighted_matrix = np.dot(neigh_matrix,W)
+    neighbor_count = round(np.sum(weighted_matrix[:-1, :-1]) + np.sum(weighted_matrix[1:, 1:]))
+    return neighbor_count
+
+  '''
+   
 
 def update_initial_config(grid, row, col):
     if 0 <= row < ROWS and 0 <= col < COLS:
@@ -112,6 +127,10 @@ def main():
     pygame.init()
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption("Conway's Game of Life")
+
+
+    current_mask = masks['Standard']
+    current_mask_name = 'Standard'
 
     grid = initialize_grid()
     running = True
@@ -144,7 +163,7 @@ def main():
                 if event.button == 1 or event.button == 3:
                     placing_cells = False  # Disable placing or clearing on any button release
             elif event.type == pygame.MOUSEMOTION:
-                if event.buttons[0]:  # Check if left button is held during motion
+                if placing_cells:  # Continue placing cells if left button was held down
                     x, y = event.pos
                     row = y // CELL_SIZE
                     col = x // CELL_SIZE
@@ -164,6 +183,34 @@ def main():
                     grid = initialize_grid()
                     generation = 0
                     alive_cells = 0
+                elif event.key == pygame.K_1:
+                    current_mask = masks['Standard']
+                    current_mask_name = 'Standard'
+                elif event.key == pygame.K_2:
+                    current_mask = masks['Isotropic']
+                    current_mask_name = 'Isotropic'
+                    print("Switched to Isotropic mask")  # Debug print
+                elif event.key == pygame.K_3:
+                    current_mask = masks['Diagonal']
+                    current_mask_name = 'Diagonal'
+                elif event.key == pygame.K_4:
+                    current_mask = masks['Cross']
+                    current_mask_name = 'Cross'
+                elif event.key == pygame.K_5:
+                    current_mask = masks['Cross4']
+                    current_mask_name = 'Cross4'
+                elif event.key == pygame.K_6:
+                    current_mask = masks['Cross4Diag']
+                    current_mask_name = 'Cross4Diag'
+                elif event.key == pygame.K_7:
+                    current_mask = masks['Hex0']
+                    current_mask_name = 'Hex0'
+                elif event.key == pygame.K_8:
+                    current_mask = masks['Hex1']
+                    current_mask_name = 'Hex1'
+                elif event.key == pygame.K_9:
+                    current_mask = masks['Hex2']
+                    current_mask_name = 'Hex2'
 
 
         if simulation_running and current_time - last_update_time > update_interval:

@@ -1,8 +1,19 @@
+'''
+Title: Selfish Rules to Conway's Game of Life
+Authors: Krishna Pavani Munta, Abulfat Asadov, Ruth Onoba
+Place: University of Leeds
+Date: 05/05/2024
+Description: The code allots an alive cell with a percentage of selfish behaviour 
+
+Input: SELFISHNESS_LEVEL in range of 0 to 100
+
+'''
 import pygame
 import numpy as np
 import time
 import random
 import matplotlib.pyplot as plt
+import csv
 
 # Constants
 WIDTH, HEIGHT = 800, 600
@@ -13,13 +24,33 @@ BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 GREEN = (0, 255, 0)
 GRAY = (169, 169, 169)
-SELFISHNESS_LEVEL = 0.5  # Adjust the level of selfishness as needed
+SELFISHNESS_LEVEL = float(input("Please enter level of selfishness(0-100): "))/100  # Adjust the level of selfishness as needed
 
 def initialize_grid():
     return np.zeros((ROWS, COLS))
 
-def initialize_selfishness():
-    return np.random.rand(ROWS, COLS) < SELFISHNESS_LEVEL
+import numpy as np
+
+def initialize_selfishness(grid, SELFISHNESS_LEVEL):
+    num_alive_cells = int(np.sum(grid))  # Count the number of alive cells
+    alive_indices = np.argwhere(grid == 1)  # Get indices of alive cells
+    num_cells_to_set_selfish = int(num_alive_cells * SELFISHNESS_LEVEL)  # Determine the number of cells to set selfishness for
+
+    # Randomly select indices to set selfishness for
+    indices_to_set_selfish = np.random.choice(len(alive_indices), num_cells_to_set_selfish, replace=False)
+
+    selfishness = np.zeros_like(grid)  # Initialize selfishness matrix
+    # Set selfishness to 1 for selected indices
+    for idx in indices_to_set_selfish:
+        row, col = alive_indices[idx]
+        selfishness[row][col] = 1
+
+    return selfishness
+
+def is_selfish(cell_row, cell_col, selfishness):
+    return selfishness[cell_row][cell_col] == 1
+
+
 
 def draw_grid(screen, grid, generation, alive_cells):
     screen.fill(BLACK)
@@ -30,9 +61,9 @@ def draw_grid(screen, grid, generation, alive_cells):
             else:
                 pygame.draw.rect(screen, GRAY, (col * CELL_SIZE, row * CELL_SIZE, CELL_SIZE, CELL_SIZE), 1)
     font = pygame.font.Font(None, 36)
-    text = font.render(f"Generation: {generation}", True, WHITE)
-    alive_cells_text = font.render(f"Alive Cells: {alive_cells}", True, WHITE) 
+    text = font.render(f"Generation: {generation}", True, WHITE) 
     titletext = font.render(f"CONWAY'S GAME OF LIFE", True, WHITE)
+    alive_cells_text = font.render(f"Alive Cells: {alive_cells}", True, WHITE) 
     screen.blit(text, (10, 10))
     screen.blit(alive_cells_text, (10, 50))
     screen.blit(titletext, (450, 10))
@@ -40,38 +71,53 @@ def draw_grid(screen, grid, generation, alive_cells):
 
 def update_grid(grid, generation, selfishness, alive_cells):
     new_grid = grid.copy()
+    alive_cells = 0
     for row in range(ROWS):
         for col in range(COLS):
             neighbors = count_neighbors(grid, row, col)
-            if grid[row][col] == 1:  # Cell is alive
-                if neighbors >= 4:  # Rule 1
-                    vitality = 1
-                    kill_neighbors(new_grid, row, col)
-                elif neighbors <= 1:
-                    if selfishness[row][col] > 0:  # Rule 2
-                        selfishness[row][col] -= 1
-                    else:
-                        grid[row][col] = 0
-                elif neighbors == 3 or neighbors == 4:  # Rule 3
-                    new_grid[row][col] = 1
-            else:  # Cell is dead
-                if neighbors == 3 or neighbors == 4:  # Rule 3
-                    new_grid[row][col] = 1
-                    selfishness[row][col] = random.random() < SELFISHNESS_LEVEL  # Rule 4
+            if is_selfish(row, col, initialize_selfishness(grid, SELFISHNESS_LEVEL)):  # cell is selfish
+                if grid[row][col] == 1:
+                    if neighbors >= 4:  # Rule 1
+                        selfishness[row][col] += 1
+                        kill_neighbors(new_grid, row, col)
+                    elif neighbors <= 1:
+                        if selfishness[row][col] >= 1:  # Rule 2
+                            selfishness[row][col] -= 1
+                        else:
+                            grid[row][col] = 0
+                else:  # Cell is dead
+                    if neighbors == 3 or neighbors == 4:  # Rule 3
+                        new_grid[row][col] = 1
+                         # Assign selfishness randomly with a 25% chance to be 1
+                        selfishness[row][col] = 1 if random.random() < SELFISHNESS_LEVEL else 0  # Rule 4
+            else:
+                if grid[row][col] == 1:
+                    alive_cells += 1
+                    if neighbors < 2 or neighbors > 3:
+                        new_grid[row][col] = 0
+                else:
+                    if neighbors == 3:
+                        new_grid[row][col] = 1
+                        alive_cells += 1
     generation += 1
     alive_cells = np.sum(new_grid)
     return new_grid, generation, alive_cells
 
 def kill_neighbors(grid, row, col):
     directions = [(0, -1), (1, 0), (0, 1), (-1, 0)]  # Clockwise direction: left, down, right, up
+    neighbors =  count_neighbors(grid, row, col) # Counter to track the number of neighbors killed
+    
     for dx, dy in directions:
-        while True:
+        while neighbors >= 3:
             new_row, new_col = row + dy, col + dx
             if 0 <= new_row < ROWS and 0 <= new_col < COLS and grid[new_row][new_col] == 1:
                 grid[new_row][new_col] = 0  # Kill neighbor
+                neighbors -= 1  # Increment the counter
                 row, col = new_row, new_col  # Move to the next neighbor
+                
             else:
                 break
+    
 
 def count_neighbors(grid, row, col):
     count = 0
@@ -93,7 +139,7 @@ def main():
     pygame.display.set_caption("Conway's Game of Life")
 
     grid = initialize_grid()
-    selfishness = initialize_selfishness()
+    selfishness = initialize_selfishness(grid, SELFISHNESS_LEVEL)
     running = True
     placing_cells = False
     simulation_running = False
@@ -148,6 +194,10 @@ def main():
             plt.show()
 
     pygame.quit()
+
+    with open('AliveCells.csv', 'w', newline = '') as csvfile:
+        my_writer = csv.writer(csvfile, delimiter = ' ')
+        my_writer.writerow(alive_cells_array)
 
 if __name__ == "__main__":
     main()
