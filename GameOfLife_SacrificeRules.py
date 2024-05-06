@@ -2,8 +2,8 @@ import pygame
 import numpy as np
 import time
 import matplotlib.pyplot as plt
-import csv
 import random
+
 
 # Constants
 WIDTH, HEIGHT = 800, 600
@@ -14,7 +14,7 @@ BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 GREEN = (0, 255, 0)
 GRAY = (169, 169, 169)
-n = 5 #change the number here to experiment 
+n = int(input("Please input the number of neighbours for the cell to sacrifice itself:"))
 
 def initialize_grid():
     return np.zeros((ROWS, COLS))
@@ -29,92 +29,47 @@ def draw_grid(screen, grid, generation, alive_cells):
                 pygame.draw.rect(screen, GRAY, (col * CELL_SIZE, row * CELL_SIZE, CELL_SIZE, CELL_SIZE), 1)
     font = pygame.font.Font(None, 36)
     text = font.render(f"Generation: {generation}", True, WHITE)
-    alive_cells_text = font.render(f"Alive Cells: {alive_cells}", True, WHITE) 
     titletext = font.render(f"CONWAY'S GAME OF LIFE", True, WHITE)
+    alive_cells_text = font.render(f"Alive Cells: {alive_cells}", True, WHITE) 
     screen.blit(text, (10, 10))
-    screen.blit(alive_cells_text, (10, 50))
     screen.blit(titletext, (450, 10))
+    screen.blit(alive_cells_text, (10, 50))
     pygame.display.update()
 
-# def update_grid(grid, generation, alive_cells):
-#     new_grid = grid.copy()
-#     alive_cells = 0
-    
-#     # live_cells = [(row, col) for row in range(ROWS) for col in range(COLS) if grid[row, col] == 1]
-#     live_cells = []
-#     for row in range(ROWS):
-#         for col in range(COLS):
-#             if grid[row][col] == 1:  # Check if the cell is alive
-#                 live_cells.append((row, col))  # Add the coordinates of the live cell to the list
-#     random.shuffle(live_cells)  # Shuffle the order of live cell coordinates
-#     for row in range(ROWS):
-#         for col in range(COLS):
-#             neighbors = count_neighbors(grid, row, col)
-#             if grid[row][col] == 1:
-#                 alive_cells +=1
-#                 if neighbors < 2 or neighbors > 3:
-#                     new_grid[row][col] = 0  # Die if fewer than 2 or more than 3 neighbors
-#                 if neighbors == n:
-#                     new_grid[row][col] = 0  # Sacrifice if exactly n neighbors
-#             else:
-#                 if neighbors == 3:
-#                     alive_cells += 1
-#                     new_grid[row][col] = 1  # Birth if exactly 3 neighbors
-#     generation += 1
-#     alive_cells = np.sum(new_grid)
-#     return new_grid, generation, alive_cells
+def get_alive_cells(grid):
+    alive_cells = []
+    for row in range(len(grid)):
+        for col in range(len(grid[0])):
+            if grid[row][col] == 1:
+                alive_cells.append((row, col))
+    random.shuffle(alive_cells)  # Shuffle the list of alive cell coordinates
+    return alive_cells
 
-
-# def count_neighbors(grid, row, col):
-#     count = 0
-#     for i in range(-1, 2):
-#         for j in range(-1, 2):
-#             if i == 0 and j == 0:
-#                 continue
-#             if (0 <= row + i < ROWS) and (0 <= col + j < COLS): #if cell is within bounds of grid
-#                 count += grid[row + i][col + j]
-#     return count
-    
-
-def update_grid(grid, generation, alive_cells, n):
-    ROWS, COLS = grid.shape
+def update_grid(grid, generation, alive_cells):
     new_grid = grid.copy()
     alive_cells = 0
-
-
-    live_cells = [(row, col) for row in range(ROWS) for col in range(COLS) if grid[row, col] == 1]
-    random.shuffle(live_cells)  # Shuffle the order of live cell coordinates
-
-
-    for i in live_cells:
-        if new_grid[i[0], i[1]] == 1:
-            neighbors = count_neighbors(new_grid, i[0], i[1])
-            if neighbors == n:
-                new_grid[i[0], i[1]] = 0
-    
-    # # First pass: handle the 'sacrifice' of live cells
-    # for (row, col) in live_cells:
-    #     if new_grid[row, col] == 1:  # Check if still alive
-    #         neighbors = count_neighbors(new_grid, row, col)
-    #         if neighbors == n:
-    #             new_grid[row, col] = 0  # Sacrifice if exactly n neighbors
-
-    # Second pass: apply regular Game of Life rules to the updated grid
-    final_grid = new_grid.copy()
+    # sacrificial pre-game
+    alive_cells_array = get_alive_cells(grid)
+    for row, col in alive_cells_array:
+        neighbors = count_neighbors(grid, row, col)
+        if neighbors == n:  # Check if alive cell has more than 5 neighbors
+            new_grid[row][col] = 0  # Sacrifice the alive cell
+            
+    # nature rules
     for row in range(ROWS):
         for col in range(COLS):
-            neighbors = count_neighbors(new_grid, row, col)  # Use new_grid for updated neighbor counts
-            if new_grid[row, col] == 1:
+            neighbors = count_neighbors(grid, row, col)
+            if grid[row][col] == 1:
+                alive_cells += 1
                 if neighbors < 2 or neighbors > 3:
-                    final_grid[row, col] = 0  # Die by underpopulation or overpopulation
+                    new_grid[row][col] = 0
             else:
                 if neighbors == 3:
-                    final_grid[row, col] = 1  # Birth if exactly 3 neighbors
-                    alive_cells +=1
-
+                    new_grid[row][col] = 1
+                    alive_cells += 1
     generation += 1
-    alive_cells = np.sum(final_grid)
-    return final_grid, generation, alive_cells
+    alive_cells = np.sum(new_grid)
+    return new_grid, generation, alive_cells
 
 def count_neighbors(grid, row, col):
     count = 0
@@ -122,15 +77,9 @@ def count_neighbors(grid, row, col):
         for j in range(-1, 2):
             if i == 0 and j == 0:
                 continue
-            n_row, n_col = row + i, col + j
-            if 0 <= n_row < grid.shape[0] and 0 <= n_col < grid.shape[1]:
-                count += grid[n_row, n_col]
+            if (0 <= row + i < ROWS) and (0 <= col + j < COLS):
+                count += grid[row + i][col + j]
     return count
-
-
-
-
-
 
 def update_initial_config(grid, row, col):
     if 0 <= row < ROWS and 0 <= col < COLS:
@@ -182,11 +131,12 @@ def main():
                     alive_cells = 0
 
         if simulation_running and current_time - last_update_time > update_interval:
-            grid, generation, alive_cells = update_grid(grid, generation,alive_cells, n)
+            grid, generation, alive_cells = update_grid(grid, generation, alive_cells)
             alive_cells_array.append(alive_cells)
             last_update_time = current_time
 
         draw_grid(screen, grid, generation, alive_cells)
+
         if not running:
             # Plot generations vs. alive_cells_array after the simulation loop
             plt.plot(range(generation), alive_cells_array)
@@ -197,10 +147,6 @@ def main():
             plt.show()
 
     pygame.quit()
-    
-    with open('AliveCells.csv', 'w', newline = '') as csvfile:
-        my_writer = csv.writer(csvfile, delimiter = ' ')
-        my_writer.writerow(alive_cells_array)
 
 if __name__ == "__main__":
     main()
