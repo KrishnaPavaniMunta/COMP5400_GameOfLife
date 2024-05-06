@@ -17,7 +17,7 @@ GRAY = (169, 169, 169)
 masks = {
     'Standard': np.array([[1, 1, 1], [1, 0, 1], [1, 1, 1]]),
     'Isotropic': np.array([[0.7, 1, 0.7], [1, 0, 1], [0.7, 1, 0.7]]),
-    'Diagonal': np.array([[1, 0.7, 1], [0.7, 0, 0.7], [1, 0.7, 1]]),
+    'IsotropicDiag': np.array([[1, 0.7, 1], [0.7, 0, 0.7], [1, 0.7, 1]]),
     'Cross': np.array([[0.3, 1, 0.3], [1, 0, 1], [0.3, 1, 0.3]]),
     'Cross4': np.array([[0, 1, 0], [1, 0, 1], [0, 1, 0]]),
     'Cross4Diag': np.array([[1, 0, 1], [0, 0, 0], [1, 0, 1]]),
@@ -25,11 +25,14 @@ masks = {
     'Hex1': np.array([[0.75, 0.5, 0.75], [1, 0, 1], [0.75, 0.5, 0.75]]),
     'Hex2': np.array([[1, 0.75, 0.5], [0.75, 0, 0.75], [0.5, 0.75, 1]])
 }
-
-current_mask_name = 'Standard'
+print("Available masks:", end = "")
+print("Standard, Isotropic, IsotropicDiag", end = "")
+print("Cross, Cross4, Cross4Diag", end = "")
+print("Hex0, Hex1, Hex2",end ="")
+current_mask_name = input("Please input mask name: ")
 current_mask = masks[current_mask_name]
 # Define the specific probability of cell death
-Pdeath = 1  # Specific probability
+Pdeath = float(input("Please input the probability (0-1): "))  # Specific probability
 
 def initialize_grid():
     return np.zeros((ROWS, COLS))
