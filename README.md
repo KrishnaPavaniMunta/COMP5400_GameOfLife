@@ -93,4 +93,9 @@ python GameOfLife_CustomPlace.py
 
 Ensure that you are in the correct directory where the Python scripts are located when running the commands. With the dependencies installed, you should be able to enjoy exploring the different implementations of Conway's Game of Life!
 
+### Acknowledgments
+
+1. John Horton Conway for creating Conway's Game of Life.
+2. The Python community for developing and maintaining the libraries used in this project.
+
 Enjoy exploring the various behaviors of cellular automata in Conway's Game of Life!

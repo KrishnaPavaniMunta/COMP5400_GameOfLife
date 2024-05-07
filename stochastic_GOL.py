@@ -14,6 +14,8 @@ BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 GREEN = (0, 255, 0)
 GRAY = (169, 169, 169)
+BLUE = (0, 0, 128)
+RED = (255, 0, 255)
 
 masks = {
     'Standard': np.array([[1, 1, 1], [1, 0, 1], [1, 1, 1]]),
@@ -49,9 +51,10 @@ def draw_grid(screen, grid, generation, alive_cells):
                 pygame.draw.rect(screen, GREEN, (col * CELL_SIZE, row * CELL_SIZE, CELL_SIZE, CELL_SIZE))
             else:
                 pygame.draw.rect(screen, GRAY, (col * CELL_SIZE, row * CELL_SIZE, CELL_SIZE, CELL_SIZE), 1)
+
     font = pygame.font.Font(None, 36)
     text = font.render(f"Generation: {generation}", True, WHITE)
-    mask_text = font.render(f"Current Mask: {current_mask_name}", True, WHITE)
+    mask_text = font.render(f"Mask/Probability: {current_mask_name}/{Pdeath}", True, WHITE)
     alive_cells_text = font.render(f"Alive Cells: {alive_cells}", True, WHITE)
     titletext = font.render(f"CONWAY'S GAME OF LIFE", True, WHITE)
     screen.blit(text, (10, 10))
