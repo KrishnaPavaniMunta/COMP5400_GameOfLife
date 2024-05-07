@@ -3,6 +3,7 @@ import numpy as np
 import time
 import matplotlib.pyplot as plt
 import random
+import csv
 
 # Constants
 WIDTH, HEIGHT = 800, 600
@@ -189,6 +190,10 @@ def main():
             plt.show()
 
     pygame.quit()
+    
+    with open('AliveCells.csv', 'w', newline = '') as csvfile:
+        my_writer = csv.writer(csvfile, delimiter = ' ')
+        my_writer.writerow(alive_cells_array)
 
     with open('AliveCells.csv', 'w', newline = '') as csvfile:
         my_writer = csv.writer(csvfile, delimiter = ' ')
