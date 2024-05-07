@@ -95,7 +95,7 @@ Ensure that you are in the correct directory where the Python scripts are locate
 
 ### Acknowledgments
 
-1.John Horton Conway for creating Conway's Game of Life.
-2.The Python community for developing and maintaining the libraries used in this project.
+1. John Horton Conway for creating Conway's Game of Life.
+2. The Python community for developing and maintaining the libraries used in this project.
 
 Enjoy exploring the various behaviors of cellular automata in Conway's Game of Life!
