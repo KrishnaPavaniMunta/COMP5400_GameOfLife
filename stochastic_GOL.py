@@ -32,7 +32,10 @@ print("Standard, Isotropic, Diagonal\n", end ="")
 print("Cross, Cross4, Cross4Diag\n", end ="")
 print("Hex0, Hex1, Hex2\n",end ="")
 current_mask_name = input("Please input mask name: ")
-current_mask = masks[current_mask_name]
+if current_mask_name in masks:
+    current_mask = masks[current_mask_name]
+else:
+    print("Invalid mask name. Please select from the available masks.")
 # Define the specific probability of cell death
 Pdeath = float(input("Please input the probability (0-1): "))  # Specific probability
 
