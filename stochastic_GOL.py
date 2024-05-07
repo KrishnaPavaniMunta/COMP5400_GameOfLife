@@ -3,6 +3,7 @@ import numpy as np
 import time
 import matplotlib.pyplot as plt
 import random
+import csv
 
 # Constants
 WIDTH, HEIGHT = 800, 600
@@ -13,11 +14,13 @@ BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 GREEN = (0, 255, 0)
 GRAY = (169, 169, 169)
+BLUE = (0, 0, 128)
+RED = (255, 0, 255)
 
 masks = {
     'Standard': np.array([[1, 1, 1], [1, 0, 1], [1, 1, 1]]),
     'Isotropic': np.array([[0.7, 1, 0.7], [1, 0, 1], [0.7, 1, 0.7]]),
-    'Diagonal': np.array([[1, 0.7, 1], [0.7, 0, 0.7], [1, 0.7, 1]]),
+    'IsotropicDiag': np.array([[1, 0.7, 1], [0.7, 0, 0.7], [1, 0.7, 1]]),
     'Cross': np.array([[0.3, 1, 0.3], [1, 0, 1], [0.3, 1, 0.3]]),
     'Cross4': np.array([[0, 1, 0], [1, 0, 1], [0, 1, 0]]),
     'Cross4Diag': np.array([[1, 0, 1], [0, 0, 0], [1, 0, 1]]),
@@ -25,11 +28,17 @@ masks = {
     'Hex1': np.array([[0.75, 0.5, 0.75], [1, 0, 1], [0.75, 0.5, 0.75]]),
     'Hex2': np.array([[1, 0.75, 0.5], [0.75, 0, 0.75], [0.5, 0.75, 1]])
 }
-
-current_mask_name = 'Standard'
-current_mask = masks[current_mask_name]
+print("Available masks:\n", end ="")
+print("Standard, Isotropic, Diagonal\n", end ="")
+print("Cross, Cross4, Cross4Diag\n", end ="")
+print("Hex0, Hex1, Hex2\n",end ="")
+current_mask_name = input("Please input mask name: ")
+if current_mask_name in masks:
+    current_mask = masks[current_mask_name]
+else:
+    print("Invalid mask name. Please select from the available masks.")
 # Define the specific probability of cell death
-Pdeath = 1  # Specific probability
+Pdeath = float(input("Please input the probability (0-1): "))  # Specific probability
 
 def initialize_grid():
     return np.zeros((ROWS, COLS))
@@ -42,9 +51,10 @@ def draw_grid(screen, grid, generation, alive_cells):
                 pygame.draw.rect(screen, GREEN, (col * CELL_SIZE, row * CELL_SIZE, CELL_SIZE, CELL_SIZE))
             else:
                 pygame.draw.rect(screen, GRAY, (col * CELL_SIZE, row * CELL_SIZE, CELL_SIZE, CELL_SIZE), 1)
+
     font = pygame.font.Font(None, 36)
     text = font.render(f"Generation: {generation}", True, WHITE)
-    mask_text = font.render(f"Current Mask: {current_mask_name}", True, WHITE)
+    mask_text = font.render(f"Mask/Probability: {current_mask_name}/{Pdeath}", True, WHITE)
     alive_cells_text = font.render(f"Alive Cells: {alive_cells}", True, WHITE)
     titletext = font.render(f"CONWAY'S GAME OF LIFE", True, WHITE)
     screen.blit(text, (10, 10))
@@ -180,6 +190,14 @@ def main():
             plt.show()
 
     pygame.quit()
+    
+    with open('AliveCells.csv', 'w', newline = '') as csvfile:
+        my_writer = csv.writer(csvfile, delimiter = ' ')
+        my_writer.writerow(alive_cells_array)
+
+    with open('AliveCells.csv', 'w', newline = '') as csvfile:
+        my_writer = csv.writer(csvfile, delimiter = ' ')
+        my_writer.writerow(alive_cells_array)
 
 if __name__ == "__main__":
     main()

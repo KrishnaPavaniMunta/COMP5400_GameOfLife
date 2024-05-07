@@ -14,11 +14,7 @@ BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 GREEN = (0, 255, 0)
 GRAY = (169, 169, 169)
-<<<<<<< Updated upstream
-n = 5 #change the number here to experiment 
-=======
 n = 6  # Number of neighbors for the special rule
->>>>>>> Stashed changes
 
 def initialize_grid():
     return np.zeros((ROWS, COLS))
@@ -43,7 +39,6 @@ def draw_grid(screen, grid, generation, alive_cells):
     screen.blit(titletext, (450, 10))
     pygame.display.update()
 
-<<<<<<< Updated upstream
 # def update_grid(grid, generation, alive_cells):
 #     new_grid = grid.copy()
 #     alive_cells = 0
@@ -123,28 +118,6 @@ def update_grid(grid, generation, alive_cells, n):
     generation += 1
     alive_cells = np.sum(final_grid)
     return final_grid, generation, alive_cells
-=======
-def update_grid(grid, age_grid, generation):
-    new_grid = np.copy(grid)
-    new_age_grid = np.copy(age_grid)
-    lifespans = []
-    for row in range(ROWS):
-        for col in range(COLS):
-            neighbors = count_neighbors(grid, row, col)
-            if grid[row][col] == 1:
-                if neighbors < 2 or neighbors > 3 or neighbors == n:
-                    lifespans.append(age_grid[row][col])  # Record lifespan before death
-                    new_grid[row][col] = 0
-                    new_age_grid[row][col] = 0
-                else:
-                    new_age_grid[row][col] += 1  # Increment age since it survives
-            else:
-                if neighbors == 3:
-                    new_grid[row][col] = 1
-                    new_age_grid[row][col] = 1  # New birth, start age at 1
-    generation += 1
-    return new_grid, new_age_grid, generation, np.sum(new_grid), lifespans
->>>>>>> Stashed changes
 
 def count_neighbors(grid, row, col):
     count = 0
@@ -157,16 +130,7 @@ def count_neighbors(grid, row, col):
                 count += grid[n_row, n_col]
     return count
 
-<<<<<<< Updated upstream
-
-
-
-
-
-def update_initial_config(grid, row, col):
-=======
 def update_initial_config(grid, age_grid, row, col):
->>>>>>> Stashed changes
     if 0 <= row < ROWS and 0 <= col < COLS:
         grid[row][col] = 1
         age_grid[row][col] = 1  # Start with age 1 upon initial placement
@@ -210,12 +174,8 @@ def main():
                     alive_cells = 0
 
         if simulation_running and current_time - last_update_time > update_interval:
-<<<<<<< Updated upstream
-            grid, generation, alive_cells = update_grid(grid, generation,alive_cells, n)
-=======
             grid, age_grid, generation, alive_cells, lifespans = update_grid(grid, age_grid, generation)
             all_lifespans.extend(lifespans)
->>>>>>> Stashed changes
             alive_cells_array.append(alive_cells)
             last_update_time = current_time
 

@@ -24,7 +24,7 @@ BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 GREEN = (0, 255, 0)
 GRAY = (169, 169, 169)
-SELFISHNESS_LEVEL = float(input("Please enter level of selfishness(0-100):"))/100  # Adjust the level of selfishness as needed
+SELFISHNESS_LEVEL = float(input("Please enter level of selfishness(0-100): "))/100  # Adjust the level of selfishness as needed
 
 def initialize_grid():
     return np.zeros((ROWS, COLS))
