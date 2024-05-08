@@ -20,7 +20,7 @@ RED = (255, 0, 255)
 masks = {
     'Standard': np.array([[1, 1, 1], [1, 0, 1], [1, 1, 1]]),
     'Isotropic': np.array([[0.7, 1, 0.7], [1, 0, 1], [0.7, 1, 0.7]]),
-    'IsotropicDiag': np.array([[1, 0.7, 1], [0.7, 0, 0.7], [1, 0.7, 1]]),
+    'Diagonal': np.array([[1, 0.7, 1], [0.7, 0, 0.7], [1, 0.7, 1]]),
     'Cross': np.array([[0.3, 1, 0.3], [1, 0, 1], [0.3, 1, 0.3]]),
     'Cross4': np.array([[0, 1, 0], [1, 0, 1], [0, 1, 0]]),
     'Cross4Diag': np.array([[1, 0, 1], [0, 0, 0], [1, 0, 1]]),
@@ -191,11 +191,7 @@ def main():
 
     pygame.quit()
     
-    with open('AliveCells.csv', 'w', newline = '') as csvfile:
-        my_writer = csv.writer(csvfile, delimiter = ' ')
-        my_writer.writerow(alive_cells_array)
-
-    with open('AliveCells.csv', 'w', newline = '') as csvfile:
+    with open('Isotropic0-2.csv', 'w', newline = '') as csvfile:
         my_writer = csv.writer(csvfile, delimiter = ' ')
         my_writer.writerow(alive_cells_array)
 
