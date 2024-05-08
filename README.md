@@ -12,7 +12,7 @@ The aim of this project is to analyze the emergent behavior of cells when the in
 | GameOfLife_CustomPlace.py   | Original Game of Life implementation with custom cell placement  |
 | GameOfLife_SelfishRules.py  | Implementation where cells exhibit selfish behavior              |
 | GameOfLife_SacrificeRules.py| Implementation where cells exhibit sacrifice behavior            |
-| stochastic_GOL.py           | Implementation with stochastic growth properties                 |
+| GameOfLife_DeathProbability.py           | Implementation with stochastic growth properties                 |
 
 ## Functionalities of Extensions
 ### Game of Life Original
@@ -79,13 +79,13 @@ These commands will install all the necessary dependencies required to run Conwa
 
 Once the dependencies are installed, you can run each version of the game by executing the corresponding Python script. For example:
     ```
-    python GameOfLife_CustomPlace.py
+    python GameOfLife_OG.py
     ```
 Ensure that you are in the correct directory where the Python scripts are located when running the commands. With the dependencies installed, you should be able to enjoy exploring the different implementations of Conway's Game of Life!
 
 ## How to Play
 ### Game of Life (Original)
-- Run `GameOfLife_CustomPlace.py`.
+- Run `GameOfLife_OG.py`.
 - Left-click to place live cells, right-click to remove.
 - Press spacebar to start/stop the simulation.
 
@@ -100,7 +100,7 @@ Ensure that you are in the correct directory where the Python scripts are locate
 - Specify the number of neighbors for sacrifice when prompted.
 
 ### Probability of death
-- Run `stochastic_GOL.py`.
+- Run `GameOfLife_DeathProbability.py`.
 - Cells exhibit self-healing and self-controlled growth properties.
 - Specify the probability of cell death when prompted.
 

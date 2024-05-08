@@ -102,8 +102,8 @@
         }
         .video-container {
            
-            width: 320px;
-            height: 180px;
+            width: 640px;
+            height: 480px;
             margin: 20px 20px; /* Add space above and below */
         }
         
@@ -151,7 +151,7 @@
                 <td>Implementation where cells exhibit sacrifice behavior</td>
             </tr>
             <tr>
-                <td><code>stochastic_GOL.py</code></td>
+                <td><code>GameOfLife_DeathProbability.py</code></td>
                 <td>Implementation with stochastic growth properties</td>
             </tr>
         </table>
@@ -175,6 +175,11 @@
                     <li>If a dead cell is surrounded by exactly three neighbors, a birth will occur, and the cell will become
                         alive.</li>
                 </ul>
+                <div class="video-container">
+                    <video width="320" height="240" autoplay loop>
+                        <source src="Images and Videos\OG Game.mp4" type="video/mp4">
+                    </video>
+                </div>
                 <p><strong>Features:</strong></p>
                 <ol>
                     <p>Can produce highly complex patterns depending on the initial configurations.</p>
@@ -191,6 +196,7 @@
                           </video>
                 </ol>
             </li>
+    
 
             <li>
                 <h3>Game of Life with Sacrifice Rules</h3>
@@ -232,9 +238,14 @@
                     <li>Optimization of population for some levels of selfishness.</li>
                 </ol>
             </li>
+            <div class="video-container">
+                <video width="320" height="240" autoplay loop>
+                    <source src="Images and Videos\Selfish -N-50.mp4" type="video/mp4">
+                </video>
+            </div>
 
             <li>
-                <h3>Game of Life with Probability</h3>
+                <h3>Game of Life with Death Probability</h3>
                 <p>This file implements the Game of Life with modified rules where probability is introduced into the cell death
                     and additional weighted masks are introduced to neighbors count. The Upgrade Grid function upgrades the
                     rules inspired as mentioned in the paper by <a href="https://www.researchgate.net/publication/258113918_Self-controlled_growth_coherent_shrinkage_eternal_life_in_a_self-bounded_space_and_other_amazing_evolutionary_dynamics_of_stochastic_pattern_formation_and_growth_models_inspired_by_Conways_Game_of_Lif">Leonid Yaroslavsky </a>.</p>
@@ -328,7 +339,7 @@
 
     <h3>Probability of death</h3>
     <ul>
-        <li>Run <code>stochastic_GOL.py</code>.</li>
+        <li>Run <code>GameOfLife_DeathProbability.py</code>.</li>
         <li>Cells exhibit self-healing and self-controlled growth properties.</li>
         <li>Specify the probability of cell death when prompted.</li>
     </ul>
