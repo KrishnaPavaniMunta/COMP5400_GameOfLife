@@ -1,3 +1,24 @@
+'''
+
+Title:  Death Probability of cells in Conway's Game of Life
+Authors: Krishna Pavani Munta, Abulfat Asadov, Ruth Onoba
+Place: University of Leeds
+Date: 29/04/2024
+
+Description: This file implements the Game of Life with modified rules where probability is introduced into the cell death and additional weighted masks are introduced to neighbors count. The Upgrade Grid function upgrades the rules inspired as mentioned in the paper by Leonid Yaroslavsky .
+
+The modifications made to the standard Conway's model are done in two ways:
+
+The "Deaths" of "live" cells are made stochastic with a certain probability 1/Pdeath, which is a model parameter.
+The number of "live" cells in the 8-neighborhood of each cell is counted using a weighted summation with rounding up the summation result instead of a simple summation of their binary values.
+Input: 
+Masks -> weighted number of neighbours
+Pdeath -> probability of death 
+
+'''
+
+
+# importing all the dependencies
 import pygame
 import numpy as np
 import time
@@ -17,6 +38,7 @@ GRAY = (169, 169, 169)
 BLUE = (0, 0, 128)
 RED = (255, 0, 255)
 
+#masks as weighted sum
 masks = {
     'Standard': np.array([[1, 1, 1], [1, 0, 1], [1, 1, 1]]),
     'Isotropic': np.array([[0.7, 1, 0.7], [1, 0, 1], [0.7, 1, 0.7]]),
@@ -32,7 +54,11 @@ print("Available masks:\n", end ="")
 print("Standard, Isotropic, Diagonal\n", end ="")
 print("Cross, Cross4, Cross4Diag\n", end ="")
 print("Hex0, Hex1, Hex2\n",end ="")
+
+#input for the mask
 current_mask_name = input("Please input mask name: ")
+
+#validating the mask name from user input
 if current_mask_name in masks:
     current_mask = masks[current_mask_name]
 else:
@@ -40,9 +66,11 @@ else:
 # Define the specific probability of cell death
 Pdeath = float(input("Please input the probability (0-1): "))  # Specific probability
 
+# Creating the grid
 def initialize_grid():
     return np.zeros((ROWS, COLS))
 
+# Drawing the grid with different colors and texts
 def draw_grid(screen, grid, generation, alive_cells):
     screen.fill(BLACK)
     for row in range(ROWS):
@@ -62,26 +90,39 @@ def draw_grid(screen, grid, generation, alive_cells):
     screen.blit(mask_text, (10, 70))
     screen.blit(titletext, (450, 10))
     pygame.display.update()
-
+    
+# Upgrading the grid for each generation
 def update_grid(grid, generation, alive_cells):
     new_grid = grid.copy()
     alive_cells = 0
     cells_to_die = []
 
+    #Checking the cells which will die and appending to a list
     for row in range(ROWS):
         for col in range(COLS):
             neighbors = count_neighbors(grid, row, col, current_mask)
             if grid[row][col] == 1 and (neighbors < 2 or neighbors > 3):
                 cells_to_die.append((row, col))
 
+    #number of cells to die
     num_cells_to_die = len(cells_to_die)
+    
+    # mutiplying with the probability
     expected_deaths = int(round(Pdeath * num_cells_to_die))
-    deaths = random.sample(cells_to_die, expected_deaths) if expected_deaths < num_cells_to_die else cells_to_die
+    
+    # assigns numbers (1 to total number of expected deaths) to death cells randomly 
+    # Assigns to death, the ones below expected deaths
+    if expected_deaths < num_cells_to_die:
+        deaths = random.sample(cells_to_die, expected_deaths) 
+    else:
+        deaths = cells_to_die
 
     for row, col in np.ndindex(grid.shape):
         neighbors = count_neighbors(grid, row, col,current_mask)
+        # If cell is in death, it dies
         if (row, col) in deaths:
             new_grid[row, col] = 0
+        # If the cell is dead and it has 3 neighbours, birth takes place
         elif grid[row, col] == 0 and neighbors == 3:
             new_grid[row, col] = 1
 
@@ -89,6 +130,7 @@ def update_grid(grid, generation, alive_cells):
     alive_cells = np.sum(new_grid)
     return new_grid, generation, alive_cells
 
+# counting the neighbours of the particular cell
 def count_neighbors(grid, row, col, mask):
     ROWS, COLS = grid.shape
     total = 0
@@ -172,7 +214,7 @@ def main():
                     generation = 0
                     alive_cells = 0
 
-
+         # Upgrading the grid and alive cells count
         if simulation_running and current_time - last_update_time > update_interval:
             grid, generation, alive_cells = update_grid(grid, generation, alive_cells)
             alive_cells_array.append(alive_cells)

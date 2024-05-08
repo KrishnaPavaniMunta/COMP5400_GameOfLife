@@ -1,3 +1,20 @@
+'''
+
+Title: Sacrifice Rules to Conway's Game of Life
+Authors: Krishna Pavani Munta, Abulfat Asadov, Ruth Onoba
+Place: University of Leeds
+Date: 19/04/2024
+
+Description: This file is the original implementation of the Game of Life following all the nature's rules. 
+The Upgrade Grid function is designed to continuously update the grid by checking the rules of Conway's Game of Life. 
+These rules are as follows:
+
+If a living cell has zero or one neighbors, it will die due to loneliness. It will also die if it has more than four neighbors.
+If a dead cell is surrounded by exactly three neighbors, a birth will occur, and the cell will become alive.
+
+'''
+
+
 import pygame
 import numpy as np
 import time
@@ -12,12 +29,13 @@ WHITE = (255, 255, 255)
 GREEN = (0, 255, 0)
 GRAY = (169, 169, 169)
 
+#Creating a grid to place the cells
 def initialize_grid():
     return np.zeros((ROWS, COLS))
 
 def initialize_age_grid():
     return np.zeros((ROWS, COLS))
-
+# drawing the cells 
 def draw_grid(screen, grid, generation, alive_cells):
     screen.fill(BLACK)
     for row in range(ROWS):
@@ -34,7 +52,7 @@ def draw_grid(screen, grid, generation, alive_cells):
     screen.blit(titletext, (450, 10))
     screen.blit(alive_cells_text, (10, 50))
     pygame.display.update()
-
+# upgrading the grid on each generation
 def update_grid(grid, generation, alive_cells, age_grid):
     new_grid = grid.copy()
     new_age_grid = age_grid.copy()
@@ -43,19 +61,20 @@ def update_grid(grid, generation, alive_cells, age_grid):
         for col in range(COLS):
             neighbors = count_neighbors(grid, row, col)
             if grid[row][col] == 1:
-                if neighbors < 2 or neighbors > 3:
+                if neighbors < 2 or neighbors > 3: #rule 1
                     lifespans.append(age_grid[row][col])
                     new_grid[row][col] = 0
                     new_age_grid[row][col] = 0
                 else:
                     new_age_grid[row][col] += 1
             else:
-                if neighbors == 3:
+                if neighbors == 3: #rule 2
                     new_grid[row][col] = 1
                     new_age_grid[row][col] = 1
     generation += 1
     return new_grid, new_age_grid, generation, np.sum(new_grid), lifespans
 
+#counting the neighours from left to right
 def count_neighbors(grid, row, col):
     count = 0
     for i in range(-1, 2):
@@ -88,7 +107,7 @@ def main():
 
     while running:
         current_time = time.time()
-
+        # events for interacting
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False

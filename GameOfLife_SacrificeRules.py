@@ -70,10 +70,11 @@ def get_alive_cells(grid):
     random.shuffle(alive_cells)  # Shuffle the list of alive cell coordinates
     return alive_cells
 
-# Upgrading the grid for eacch generation
+# Upgrading the grid for each generation
 def update_grid(grid, generation, alive_cells):
     new_grid = grid.copy()
     alive_cells = 0
+    
     # sacrificial pre-game
     alive_cells_array = get_alive_cells(grid)
     for row, col in alive_cells_array:
