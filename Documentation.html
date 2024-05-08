@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conway's Game of Life and its Extended Implementations</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        .container {
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1{
+            color: #6695b2
+        }
+         h2{
+            color: #6f98b2
+         }
+        h3 {
+            color: #92bce8;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #a2b6ca;
+            color: #fff;
+        }
+        .installation-instructions {
+            margin-bottom: 20px;
+        }
+        code {
+            background-color: #f3f3f3;
+            padding: 5px 5px;
+            border-radius: 4px;
+        }
+        pre{
+            background-color: #f8f9fb;
+            padding: 5px 5px;
+            border-radius: 4px;
+        }
+        .note{
+            background-color: #f4feef;
+            padding: 6px 6px;
+            border-radius: 4px;
+        }
+        .dependencies {
+            margin-bottom: 20px;
+        }
+        .functionality {
+            margin-bottom: 20px;
+        }
+        .acknowledgments {
+            margin-bottom: 20px;
+        }
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            color: #777;
+        }
+        .github-box {
+            width: 200px;
+            height: 50px;
+            background-color: #ffffff;
+            border: 0.5px solid   #6f98b2;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .github-box:hover {
+            background-color: #6f98b2;
+        }
+        .github-link {
+            text-decoration: none;
+            color:  #6f98b2;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+        .github-box:hover .github-link {
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Conway's Game of Life and its Extended Implementations</h1>
+        <div class="github-box">
+            <a class="github-link" href="https://github.com/KrishnaPavaniMunta/COMP5400_GameOfLife">Access Code on GitHub</a>
+        </div>
+        <h2>Aim</h2>
+        <p>The aim of this project is to analyze the emergent behavior of cells when the initial rules of Conway's Game of Life are modified. By changing the rules to non-deterministic ones and introducing new behaviors such as selfishness, sacrifice, and stochastic growth, we aim to deepen our understanding of cellular automata.</p>
+        
+        <h2>File Structure</h2>
+        <table>
+            <tr>
+                <th>File</th>
+                <th>Purpose</th>
+            </tr>
+            <tr>
+                <td><code>GameOfLife_CustomPlace.py</code></td>
+                <td>Original Game of Life implementation with custom cell placement</td>
+            </tr>
+            <tr>
+                <td><code>GameOfLife_SelfishRules.py</code></td>
+                <td>Implementation where cells exhibit selfish behavior</td>
+            </tr>
+            <tr>
+                <td><code>GameOfLife_SacrificeRules.py</code></td>
+                <td>Implementation where cells exhibit sacrifice behavior</td>
+            </tr>
+            <tr>
+                <td><code>stochastic_GOL.py</code></td>
+                <td>Implementation with stochastic growth properties</td>
+            </tr>
+        </table>
+      </h3>
+   
+     
+   
+    <div>
+        <h2>Functionalities of extensions</h2>
+                
+
+        <ol>
+            <li>
+                <h3>Game of Life Original</h3>
+                <p>This file is the original implementation of the Game of Life following all the nature's rules. The Upgrade
+                    Grid function is designed to continuously update the grid by checking the rules of Conway's Game of Life.
+                    These rules are as follows:</p>
+                <ul>
+                    <li>If a living cell has zero or one neighbors, it will die due to loneliness. It will also die if it has
+                        more than four neighbors.</li>
+                    <li>If a dead cell is surrounded by exactly three neighbors, a birth will occur, and the cell will become
+                        alive.</li>
+                </ul>
+                <p><strong>Features:</strong></p>
+                <ol>
+                    <li>Stable patterns.</li>
+                    <li>Can produce highly complex patterns depending on the initial configurations.</li>
+                        <li><strong>Emergent Patterns:</strong> Despite its simple rules, the Game of Life can give rise to complex and interesting patterns. These emergent patterns can provide insights into how simple rules can lead to complex behaviors.</li>
+                        <li><strong>Stable Patterns:</strong> Configurations that remain unchanged over multiple generations. These stable patterns include still lifes, such as blocks and beehives, where cells remain fixed in position.</li>
+                        <li><strong>Oscillators:</strong> Oscillators are patterns that cycle through a set of configurations repeatedly. They can be simple, like blinkers and toads, or more complex, like pentadecathlons and pulsars.</li>
+                        <li><strong>Spaceships:</strong> Some patterns move across the grid over time. These are called spaceships or gliders. They maintain their overall shape as they move, often leaving behind a trail of stable patterns or oscillators.</li>
+                        <li><strong>Growth and Decay:</strong> Some patterns may grow indefinitely, while others may stabilize or eventually die out.</li>
+                        <li><strong>Interaction of Patterns:</strong> Different patterns interact with each other. They can collide, merge, or influence each other's behavior in unexpected ways.</li>
+                        <li><strong>Self-Replication:</strong> Some configurations in the Game of Life can self-replicate, creating copies of themselves as they evolve. These replicators are fascinating examples of emergent complexity.</li>
+                        <li><strong>Edge Effects:</strong> Because the grid is finite, patterns near the edges may exhibit different behaviors compared to those in the central region.</li>
+                </ol>
+            </li>
+
+            <li>
+                <h3>Game of Life with Sacrifice Rules</h3>
+                <p>This file implements the Game of Life with modified rules where the alive cells play a pregame called "n-die
+                    game". The cells play the pregame where the cell sacrifices itself if it has "n" neighbors, and then the
+                    nature rules apply. The Upgrade Grid function incorporates the sacrifice rules inspired as described in the paper by
+                    <a href = "https://ieeexplore.ieee.org/document/393586">M.R.lauer et al., (1995)</a>.</p>
+                <p><strong>Features:</strong></p>
+                <ol>
+                    <li>Number of neighbors when sacrifice happens can be given as input "n".</li>
+                    <li>Optimization of population for "n" values.</li>
+                    <li>When "n = 2", new stable patterns other than the defined ones in Conway's Game of Life.</li>
+                </ol>
+            </li>
+            <li>
+                <h3>Game of Life with Selfish Rules</h3>
+                <p>This file implements the Game of Life with modified rules where a cell can exhibit selfishness based on a
+                    given percentage. The Upgrade Grid function incorporates the selfish rules inspired as described in the paper by
+                    <a href = "https://www.scirp.org/journal/paperinformation?paperid=49054">Mühlenbernd, R. and Schulz, S. (2014)</a></p>
+                <p>The rules are defined as:</p>
+                <ol>
+                    <li>The first rule states that a cell can survive by eliminating its neighbors if it is surrounded by four
+                        or more cells.</li>
+                    <li>The second rule allows a cell to survive even if it has no or one neighbor, as long as its vitality
+                        factor is greater than or equal to one.</li>
+                    <li>The third rule allows for births in an empty cell with three or four neighbors.</li>
+                    <li>Finally, the fourth rule designates a new cell as selfish based on a given level of selfishness that
+                        is a parameter of the population.</li>
+                </ol>
+                <p><strong>Features:</strong></p>
+                <ol>
+                    <li>Level of selfishness can be given in terms of percentage.</li>
+                    <li>Optimization of population for some levels of selfishness.</li>
+                </ol>
+            </li>
+
+            <li>
+                <h3>Game of Life with Probability</h3>
+                <p>This file implements the Game of Life with modified rules where probability is introduced into the cell death
+                    and additional weighted masks are introduced to neighbors count. The Upgrade Grid function upgrades the
+                    rules inspired as mentioned in the paper by <a href="https://www.researchgate.net/publication/258113918_Self-controlled_growth_coherent_shrinkage_eternal_life_in_a_self-bounded_space_and_other_amazing_evolutionary_dynamics_of_stochastic_pattern_formation_and_growth_models_inspired_by_Conways_Game_of_Lif">Leonid Yaroslavsky </a>.</p>
+                <p>The modifications made to the standard Conway's model are done in two ways:</p>
+                <ol>
+                    <li>The "Deaths" of "live" cells are made stochastic with a certain probability 1/Pdeath, which is a model
+                        parameter.</li>
+                    <li>The number of "live" cells in the 8-neighborhood of each cell is counted using a weighted summation
+                        with rounding up the summation result instead of a simple summation of their binary values.</li>
+                </ol>
+                <p><strong>Features:</strong></p>
+                <ol>
+                    <li>The probability and mask can be given as input.</li>
+                    <li>Cells expand infinitely for some probabilities and can heal themselves.</li>
+                    <li>Can show some coherent growth properties.</li>
+                </ol>
+            </li>
+            <p class="note"><strong>Note: </strong>  All the rules taken into account are just inspirations, and experimentation is done according to the team's creative thinking.</p>
+        </ol>
+</div>
+        
+        
+        <!-- Add other "How to Play" sections similarly -->
+    <div>
+        <div class="installation-instructions">
+            <h2>User Installation</h2>
+            <ol>
+                <li>Clone this repository:</li>
+                <pre>git clone https://github.com/yourusername/GameOfLife.git</pre>
+                <li>Navigate to the directory:</li>
+                <pre>cd GameOfLife</pre>
+                <li>Run the desired implementation file as mentioned above.</li>
+            </ol>
+        </div>
+        
+        <div class="dependencies">
+            <h3>Dependencies</h3>
+            <p>The main dependencies for running the various versions of Conway's Game of Life are:</p>
+            <ul>
+                <li><strong>Python:</strong> Python is the primary programming language used for implementing the game and its variations. Ensure you have Python installed on your system. You can download it from the <a href="https://www.python.org/downloads/">official Python website</a>.</li>
+                <li><strong>pygame:</strong> Pygame is a cross-platform set of Python modules designed for writing video games. It includes computer graphics and sound libraries. To install pygame, you can use pip, Python's package manager.</li>
+                <li><strong>numpy:</strong> Numpy is a fundamental package for scientific computing with Python. It provides support for large, multi-dimensional arrays and matrices, along with a collection of mathematical functions to operate on these arrays. Install numpy using pip.</li>
+                <li><strong>matplotlib:</strong> Matplotlib is a comprehensive library for creating static, animated, and interactive visualizations in Python. It is used for plotting the generation vs. alive cells graph. Install matplotlib using pip.</li>
+                <li><strong>csv (optional):</strong> The csv module is used for reading and writing CSV files. It is used in one of the implementations to save data to a CSV file.</li>
+            </ul>
+            <p>You can install the dependencies using pip, which is the package installer for Python. Open your terminal or command prompt and execute the following commands:</p>
+            <pre>pip install pygame numpy matplotlib</pre>
+            <p>If you choose to run the version that utilizes the <code>csv</code> module, you can install it with:</p>
+            <pre>pip install csv</pre>
+
+            <h3>Installation Instructions</h3>
+            <p>You can install the dependencies using pip, which is the package installer for Python. Open your terminal or command prompt and execute the following commands:</p>
+
+            <pre><code>pip install pygame numpy matplotlib</code></pre>
+
+            <p>If you choose to run the version that utilizes the <code>csv</code> module, you can install it with:</p>
+
+            <pre><code>pip install csv</code></pre>
+
+            <p>These commands will install all the necessary dependencies required to run Conway's Game of Life and its extended implementations.</p>
+
+            <p>Once the dependencies are installed, you can run each version of the game by executing the corresponding Python script. For example:</p>
+
+            <pre><code>python GameOfLife_CustomPlace.py</code></pre>
+
+            <p>Ensure that you are in the correct directory where the Python scripts are located when running the commands. With the dependencies installed, you should be able to enjoy exploring the different implementations of Conway's Game of Life!</p>
+        </div>
+        <div>
+            <h2>How to Play</h2>
+        <h3>Game of Life (Original)</h3>
+        <ul>
+            <li>Run <code>GameOfLife_CustomPlace.py</code>.</li>
+            <li>Left-click to place live cells, right-click to remove.</li>
+            <li>Press spacebar to start/stop the simulation.</li>
+        </ul>
+        <h3>Selfish Rules</h3>
+    <ul>
+        <li>Run <code>GameOfLife_SelfishRules.py</code>.</li>
+        <li>The cells exhibit selfish behavior with a specified level of selfishness.</li>
+        <li>Specify the level of selfishness when prompted.</li>
+    </ul>
+
+    <h3>Sacrifice Rules</h3>
+    <ul>
+        <li>Run <code>GameOfLife_SacrificeRules.py</code>.</li>
+        <li>The cells exhibit sacrifice behavior where they sacrifice themselves if they have a certain number of
+            neighbors.</li>
+        <li>Specify the number of neighbors for sacrifice when prompted.</li>
+    </ul>
+   
+
+    <h3>Probability of death</h3>
+    <ul>
+        <li>Run <code>stochastic_GOL.py</code>.</li>
+        <li>Cells exhibit self-healing and self-controlled growth properties.</li>
+        <li>Specify the probability of cell death when prompted.</li>
+    </ul>
+        </div>
+        
+</div>
+
+<div>
+<h2>Acknowledgments</h2>
+    <p>1. John Horton Conway for creating Conway's Game of Life.</p>
+    <p>2. The Python community for developing and maintaining the libraries used in this project.</p>
+    <p>3. Yaroslavsky, Leonid. (2013). Self-controlled growth, coherent shrinkage, eternal life in a self-bounded space and other amazing evolutionary dynamics of stochastic pattern formation and growth models inspired by Conways Game of Life. </p>  
+    <p>4. Mühlenbernd, R. and Schulz, S. (2014) The Game of Life, Decision and Communication. Natural Science, 6, 1093-1102. doi: 10.4236/ns.2014.613097.</p>
+    <p>5. M. R. Lauer, P. A. Mitchem and R. A. Gagliano, "Resource optimization and self interest: variations on the game of life," Proceedings of Simulation Symposium, Phoenix, AZ, USA, 1995, pp. 136-143, doi: 10.1109/SIMSYM.1995.393586. keywords: {Resource management;Chaos;History;Mathematics;Computer science;Mathematical model;Stability analysis;Hamming distance;Vehicles;Computer displays},
+
+    </p> 
+</div>
+        <footer>
+            Enjoy exploring the various behaviors of cellular automata in Conway's Game of Life!
+        </footer>
+    </div>
+</body>
+</html>
