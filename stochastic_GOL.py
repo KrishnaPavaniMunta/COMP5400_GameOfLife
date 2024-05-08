@@ -195,9 +195,6 @@ def main():
         my_writer = csv.writer(csvfile, delimiter = ' ')
         my_writer.writerow(alive_cells_array)
 
-    with open('AliveCells.csv', 'w', newline = '') as csvfile:
-        my_writer = csv.writer(csvfile, delimiter = ' ')
-        my_writer.writerow(alive_cells_array)
 
 if __name__ == "__main__":
     main()
