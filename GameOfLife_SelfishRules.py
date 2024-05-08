@@ -25,12 +25,12 @@ WHITE = (255, 255, 255)
 GREEN = (0, 255, 0)
 GRAY = (169, 169, 169)
 SELFISHNESS_LEVEL = float(input("Please enter level of selfishness(0-100): "))/100  # Adjust the level of selfishness as needed
-
+# Creating the grid
 def initialize_grid():
     return np.zeros((ROWS, COLS))
 
-import numpy as np
 
+# Giving some percentage of selfishness to the alive cells
 def initialize_selfishness(grid, SELFISHNESS_LEVEL):
     num_alive_cells = int(np.sum(grid))  # Count the number of alive cells
     alive_indices = np.argwhere(grid == 1)  # Get indices of alive cells
@@ -47,11 +47,13 @@ def initialize_selfishness(grid, SELFISHNESS_LEVEL):
 
     return selfishness
 
+#Checking if the particular cell is selfish and getting the vitality
 def is_selfish(cell_row, cell_col, selfishness):
     return selfishness[cell_row][cell_col] == 1
 
 
 
+# Drawing the grid with different colors and texts
 def draw_grid(screen, grid, generation, alive_cells):
     screen.fill(BLACK)
     for row in range(ROWS):
@@ -69,6 +71,7 @@ def draw_grid(screen, grid, generation, alive_cells):
     screen.blit(titletext, (450, 10))
     pygame.display.update()
 
+# Upgrading the grid for each generation
 def update_grid(grid, generation, selfishness, alive_cells):
     new_grid = grid.copy()
     alive_cells = 0
@@ -90,6 +93,8 @@ def update_grid(grid, generation, selfishness, alive_cells):
                         new_grid[row][col] = 1
                          # Assign selfishness randomly with a 25% chance to be 1
                         selfishness[row][col] = 1 if random.random() < SELFISHNESS_LEVEL else 0  # Rule 4
+            
+            # Applying nature rules to non selfish cells
             else:
                 if grid[row][col] == 1:
                     alive_cells += 1
@@ -103,6 +108,7 @@ def update_grid(grid, generation, selfishness, alive_cells):
     alive_cells = np.sum(new_grid)
     return new_grid, generation, alive_cells
 
+#Function to kill neighbours in a clockwise fashion
 def kill_neighbors(grid, row, col):
     directions = [(0, -1), (1, 0), (0, 1), (-1, 0)]  # Clockwise direction: left, down, right, up
     neighbors =  count_neighbors(grid, row, col) # Counter to track the number of neighbors killed
@@ -118,7 +124,7 @@ def kill_neighbors(grid, row, col):
             else:
                 break
     
-
+# counting the neighbours of the particular cell
 def count_neighbors(grid, row, col):
     count = 0
     for i in range(-1, 2):
@@ -151,7 +157,7 @@ def main():
 
     while running:
         current_time = time.time()
-
+        # interacting with the game
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -176,7 +182,7 @@ def main():
                     grid = initialize_grid()
                     generation = 0
                     alive_cells = 0
-
+        # Upgrading the grid and alive cells count
         if simulation_running and current_time - last_update_time > update_interval:
             grid, generation, alive_cells = update_grid(grid, generation, selfishness, alive_cells)
             alive_cells_array.append(alive_cells)
