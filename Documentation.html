@@ -100,6 +100,27 @@
         .github-box:hover .github-link {
             color: #ffffff;
         }
+        .video-container {
+           
+            width: 320px;
+            height: 180px;
+            margin: 20px 20px; /* Add space above and below */
+        }
+        
+        .video-container video {
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .video-container video::-webkit-media-controls {
+            display: none;
+        }
+        
+        
+        
+        
     </style>
 </head>
 <body>
@@ -183,7 +204,13 @@
                     <li>Optimization of population for "n" values.</li>
                     <li>When "n = 2", new stable patterns other than the defined ones in Conway's Game of Life.</li>
                 </ol>
+                
             </li>
+            <div class="video-container">
+                <video width="320" height="240" autoplay loop>
+                    <source src="Images and Videos/Sacrifice Rules.mp4" type="video/mp4">
+                </video>
+            </div>
             <li>
                 <h3>Game of Life with Selfish Rules</h3>
                 <p>This file implements the Game of Life with modified rules where a cell can exhibit selfishness based on a
