@@ -2,6 +2,7 @@ import pygame
 import numpy as np
 import time
 import matplotlib.pyplot as plt
+import csv
 
 
 # Constants
@@ -88,24 +89,36 @@ def main():
             if event.type == pygame.QUIT:
                 running = False
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1:
-                    placing_cells = True
-                elif event.button == 3:
-                    placing_cells = False
-            elif event.type == pygame.MOUSEMOTION:
-                if placing_cells:
+                if event.button == 1:  # Left mouse button
+                    placing_cells = True  # Enable placing cells
+                elif event.button == 3:  # Right mouse button
+                    placing_cells = False  # Disable placing cells, prepare for clearing if held
                     x, y = event.pos
                     row = y // CELL_SIZE
                     col = x // CELL_SIZE
-                    update_initial_config(grid,row,col)
-                    alive_cells = np.sum(grid)
                     if 0 <= row < ROWS and 0 <= col < COLS:
-                        grid[row][col] = 1
+                        grid[row][col] = 0  # Clear cell on single right-click
+                    alive_cells = np.sum(grid)  # Update alive cells count after modification
+            elif event.type == pygame.MOUSEBUTTONUP:
+                if event.button == 1 or event.button == 3:
+                    placing_cells = False  # Disable placing or clearing on any button release
+            elif event.type == pygame.MOUSEMOTION:
+                if event.buttons[0]:  # Check if left button is held during motion
+                    x, y = event.pos
+                    row = y // CELL_SIZE
+                    col = x // CELL_SIZE
+                    if 0 <= row < ROWS and 0 <= col < COLS:
+                        grid[row][col] = 1  # Set cell to alive
+                elif event.buttons[2]:  # Check if right button is held during motion
+                    x, y = event.pos
+                    row = y // CELL_SIZE
+                    col = x // CELL_SIZE
+                    if 0 <= row < ROWS and 0 <= col < COLS:
+                        grid[row][col] = 0  # Clear cells while right mouse button is held
+                alive_cells = np.sum(grid)  # Update alive cells count after modification
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     simulation_running = not simulation_running
-                elif event.key == pygame.K_c:
-                    placing_cells = not placing_cells
                 elif event.key == pygame.K_r:
                     grid = initialize_grid()
                     generation = 0
@@ -128,6 +141,10 @@ def main():
             plt.show()
 
     pygame.quit()
+
+    with open('AliveCells_OG.csv', 'w', newline = '') as csvfile:
+        my_writer = csv.writer(csvfile, delimiter = ' ')
+        my_writer.writerow(alive_cells_array)
 
 if __name__ == "__main__":
     main()
