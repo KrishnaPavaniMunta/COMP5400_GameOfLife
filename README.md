@@ -1,14 +1,16 @@
-# Conway's Game of Life and its Extended Implementations
-
+# Population Dynamics and Pattern Formation in Stochastic Modifications of John Conway’s Game of Life
+John Conway's Game of Life is a cellular automaton created in 1970 that progresses solely based on its initial configuration. The game's rules of birth, death and survival are determined by the conditions of its immediate neighbours. It is often used to simulate social and biological behaviours, illustrating how complex behaviours can emerge over time from a set of simple rules. However, the game is deterministic in nature, and this project aims to introduce non-deterministic rules to the game to incorporate elements of randomness that align more closely with real-life societies.
 ## Statement of contributions
 We, 
 Abulfat Asadov (201794482) 
 Krishna Munta (201755212) 
 Ruth Onoba (201793739) 
-confirm that we all participated and contributed towards the accomplishment of this Mini Project.
+confirm that we all participated and contributed towards the completion of this Mini-Project 
+and contributed towards all tasks carried out. Krishna and Ruth worked majorly on the code, 
+while Abulfat worked on the documentation.
 
 ## Aim
-The aim of this project is to analyze the emergent behavior of cells when the initial rules of Conway's Game of Life are modified. By changing the rules to non-deterministic ones and introducing new behaviors such as selfishness, sacrifice, and stochastic growth, we aim to deepen our understanding of cellular automata.
+This project aims to explore the impact of stochastic or non-deterministic modifications on the classical Game of Life rules, examining how random alterations in cell deaths lead to new population growth patterns and emergent structures.
 
 ## File Structure
 | File                        | Purpose                                                          |
