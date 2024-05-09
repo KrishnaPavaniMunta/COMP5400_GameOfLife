@@ -1,7 +1,11 @@
 # Conway's Game of Life and its Extended Implementations
 
-## Access Code on GitHub
-[Link to GitHub Repository](https://github.com/yourusername/GameOfLife)
+## Statement of contributions
+We, 
+Abulfat Asadov (201794482) 
+Krishna Munta (201755212) 
+Ruth Onoba (201793739) 
+confirm that we all participated and contributed towards the accomplishment of this Mini Project.
 
 ## Aim
 The aim of this project is to analyze the emergent behavior of cells when the initial rules of Conway's Game of Life are modified. By changing the rules to non-deterministic ones and introducing new behaviors such as selfishness, sacrifice, and stochastic growth, we aim to deepen our understanding of cellular automata.
@@ -16,7 +20,7 @@ The aim of this project is to analyze the emergent behavior of cells when the in
 
 ## Functionalities of Extensions
 ### Game of Life Original
-- Stable patterns.
+
 - Can produce highly complex patterns depending on the initial configurations.
 - **Emergent Patterns:** Despite its simple rules, the Game of Life can give rise to complex and interesting patterns. These emergent patterns can provide insights into how simple rules can lead to complex behaviors.
 - **Stable Patterns:** Configurations that remain unchanged over multiple generations. These stable patterns include still lifes, such as blocks and beehives, where cells remain fixed in position.
