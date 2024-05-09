@@ -1,3 +1,19 @@
+'''
+
+Title: Sacrifice Rules to Conway's Game of Life
+Authors: Krishna Pavani Munta, Abulfat Asadov, Ruth Onoba
+Place: University of Leeds
+Date: 19/04/2024
+
+Description: This file is the original implementation of the Game of Life following all the nature's rules. 
+The Upgrade Grid function is designed to continuously update the grid by checking the rules of Conway's Game of Life. 
+These rules are as follows:
+
+If a living cell has zero or one neighbors, it will die due to loneliness. It will also die if it has more than four neighbors.
+If a dead cell is surrounded by exactly three neighbors, a birth will occur, and the cell will become alive.
+
+'''
+# importing all the dependencies
 import pygame
 import numpy as np
 import time
@@ -14,10 +30,11 @@ BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 GREEN = (0, 255, 0)
 GRAY = (169, 169, 169)
-
+# Creating the grid
 def initialize_grid():
     return np.zeros((ROWS, COLS))
 
+# Drawing the grid with different colors and texts
 def draw_grid(screen, grid, generation, alive_cells):
     screen.fill(BLACK)
     for row in range(ROWS):
@@ -35,17 +52,21 @@ def draw_grid(screen, grid, generation, alive_cells):
     screen.blit(alive_cells_text, (10, 50))
     pygame.display.update()
 
+# Upgrading the grid for each generation
 def update_grid(grid, generation, alive_cells):
     new_grid = grid.copy()
     alive_cells = 0
+     # nature rules
     for row in range(ROWS):
         for col in range(COLS):
             neighbors = count_neighbors(grid, row, col)
             if grid[row][col] == 1:
                 alive_cells += 1
+            # rule  Death: If neighbors are less than 2 or greater than 3 
                 if neighbors < 2 or neighbors > 3:
                     new_grid[row][col] = 0
             else:
+            # rule Birth: If there are 3 neighbours for a dead cell birth takes place
                 if neighbors == 3:
                     new_grid[row][col] = 1
                     alive_cells += 1
@@ -53,6 +74,7 @@ def update_grid(grid, generation, alive_cells):
     alive_cells = np.sum(new_grid)
     return new_grid, generation, alive_cells
 
+# counting the neighbours of the particular cell
 def count_neighbors(grid, row, col):
     count = 0
     for i in range(-1, 2):
@@ -84,7 +106,7 @@ def main():
 
     while running:
         current_time = time.time()
-
+        # interacting with the game
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False

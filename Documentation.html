@@ -115,9 +115,9 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
         
-        .video-container video::-webkit-media-controls {
-            display: none;
-        }
+    
+        
+        
         
         
         
@@ -170,32 +170,30 @@
         <ol>
             <li>
                 <h3>Game of Life Original</h3>
-                <p>This file is the original implementation of the Game of Life following all the nature's rules. The Upgrade
-                    Grid function is designed to continuously update the grid by checking the rules of Conway's Game of Life.
+                <p>This file includes the original implementation of the Game of Life following all the traditional rules as defined by John Conway. The rules
+                    of the game are implemented through the <i> Upgrade Grid</i> function. 
                     These rules are as follows:</p>
                 <ul>
-                    <li>If a living cell has zero or one neighbors, it will die due to loneliness. It will also die if it has
-                        more than four neighbors.</li>
-                    <li>If a dead cell is surrounded by exactly three neighbors, a birth will occur, and the cell will become
-                        alive.</li>
+                    <li>If a living cell has zero or one neighbours, it will die due to loneliness.</li>
+                    <li>If a living cell has more than four neighbours, it will die due to overcrowding.</li>
+                    <li>If a dead cell is surrounded by exactly three neighbors, a birth will occur, and the cell will become alive.</li>
                 </ul>
                 <div class="video-container">
-                    <video width="320" height="240" autoplay loop>
+                    <video width="320" height="240" controls loop>
                         <source src="Images and Videos\OG Game.mp4" type="video/mp4">
                     </video>
                 </div>
                 <p><strong>Features:</strong></p>
                 <ol>
-                    <p>Can produce highly complex patterns depending on the initial configurations.</p>
-                        <li><strong>Emergent Patterns:</strong> Despite its simple rules, the Game of Life can give rise to complex and interesting patterns. These emergent patterns can provide insights into how simple rules can lead to complex behaviors.</li>
+                        <li><strong>Emergent Patterns:</strong> Despite its simple rules, the Game of Life can give rise to complex and interesting patterns. These emergent patterns can provide insights into how simple rules can lead to complex behaviours.</li>
                         <li><strong>Stable Patterns:</strong> Configurations that remain unchanged over multiple generations. These stable patterns include still lifes, such as blocks and beehives, where cells remain fixed in position.</li>
                         <li><strong>Oscillators:</strong> Oscillators are patterns that cycle through a set of configurations repeatedly. They can be simple, like blinkers and toads, or more complex, like pentadecathlons and pulsars.</li>
                         <li><strong>Spaceships:</strong> Some patterns move across the grid over time. These are called spaceships or gliders. They maintain their overall shape as they move, often leaving behind a trail of stable patterns or oscillators.</li>
-                        <li><strong>Growth and Decay:</strong> Some patterns may grow indefinitely, while others may stabilize or eventually die out.</li>
-                        <li><strong>Interaction of Patterns:</strong> Different patterns interact with each other. They can collide, merge, or influence each other's behavior in unexpected ways.</li>
+                        <li><strong>Growth and Decay:</strong> Some patterns may grow indefinitely, while others may stabilise or eventually die out.</li>
+                        <li><strong>Interaction of Patterns:</strong> Different patterns interact with each other. They can collide, merge, or influence each other's behaviour in unexpected ways.</li>
                         <li><strong>Self-Replication:</strong> Some configurations in the Game of Life can self-replicate, creating copies of themselves as they evolve. These replicators are fascinating examples of emergent complexity.</li>
-                        <li><strong>Edge Effects:</strong> Because the grid is finite, patterns near the edges may exhibit different behaviors compared to those in the central region.</li>
-                        <video width="640" height="360" autoplay loop>
+                        <li><strong>Edge Effects:</strong> Because the grid is finite, patterns near the edges may exhibit different behaviours compared to those in the central region.</li>
+                        <video width="640" height="360" controls loop>
                             <source src="Images and Videos\Exploring the emergent behaviour of cells in Conway’s Game of Life with Stochastic Characteristics.mp4" type="video/mp4">
                           </video>
                 </ol>
@@ -204,80 +202,77 @@
 
             <li>
                 <h3>Game of Life with Sacrifice Rules</h3>
-                <p>This file implements the Game of Life with modified rules where the alive cells play a pregame called "n-die
-                    game". The cells play the pregame where the cell sacrifices itself if it has "n" neighbors, and then the
-                    nature rules apply. The Upgrade Grid function incorporates the sacrifice rules inspired as described in the paper by
+                <p>This file includes the implementation of a modified Game of Life where the alive cells play a pre-game before every generation called "n-die
+                    game". In this pre-game, a cell decides if it wnats to to sacrifice itself if it has "n" neighbors. This is done through a random sequence of the live cells
+                    which dictates the order in which cells are checked for the presence of n neighbours. Followin this, the traditional rules are applied. The Upgrade Grid function incorporates the sacrifice rules adopted from the referenced paper by
                     <a href = "https://ieeexplore.ieee.org/document/393586">M.R.lauer et al., (1995)</a>.</p>
                 <p><strong>Features:</strong></p>
                 <ol>
-                    <li>Number of neighbors when sacrifice happens can be given as input "n".</li>
-                    <li>Optimization of population for "n" values.</li>
-                    <li>When "n = 2", new stable patterns other than the defined ones in Conway's Game of Life.</li>
+                    <li>Number of neighbours required for a cell to sacrifice itself is required as an input, "n".</li>
+                    <li>Variations of population dynamics for different "n" values.</li>
+                    <li>When "n = 2", new stable patterns other than the defined ones in Conway's Game of Life emerge.</li>
                 </ol>
                 
             </li>
             <div class="video-container">
-                <video width="320" height="240" autoplay loop>
+                <video width="320" height="240" controls loop>
                     <source src="Images and Videos/Sacrifice Rules.mp4" type="video/mp4">
                 </video>
             </div>
             <li>
                 <h3>Game of Life with Selfish Rules</h3>
-                <p>This file implements the Game of Life with modified rules where a cell can exhibit selfishness based on a
-                    given percentage. The Upgrade Grid function incorporates the selfish rules inspired as described in the paper by
+                <p>This file includes the implementation of the Game of Life with modified rules where a cell can exhibit selfishness based on a
+                    given percentage of selfish births. It introduces the concept of vitality which allows cells to survive events that would naturally lead to their death. Although, 
+                    for every generation they survive such events, their vitality reduces by one. The Upgrade Grid function incorporates the selfish rules as described and adopted 
+                    from the referenced paper by
                     <a href = "https://www.scirp.org/journal/paperinformation?paperid=49054">Mühlenbernd, R. and Schulz, S. (2014)</a></p>
-                <p>The rules are defined as:</p>
+                <p>The new rules are defined as:</p>
                 <ol>
-                    <li>The first rule states that a cell can survive by eliminating its neighbors if it is surrounded by four
-                        or more cells.</li>
-                    <li>The second rule allows a cell to survive even if it has no or one neighbor, as long as its vitality
-                        factor is greater than or equal to one.</li>
+                    <li>A cell can survive overcrowding by eliminating its neighbours when surrounded by four or more cells.</li>
+                    <li>A cell can survive uderpopulation even if it has no or one neighbor, as long as its vitality factor is greater than or equal to one.</li>
                     <li>The third rule allows for births in an empty cell with three or four neighbors.</li>
                     <li>Finally, the fourth rule designates a new cell as selfish based on a given level of selfishness that
                         is a parameter of the population.</li>
                 </ol>
                 <p><strong>Features:</strong></p>
                 <ol>
-                    <li>Level of selfishness can be given in terms of percentage.</li>
-                    <li>Optimization of population for some levels of selfishness.</li>
+                    <li>Percentage of selfish births is required as an input.</li>
+                    <li>Variations of population dynamics for different percentages of sefish births.</li>
                 </ol>
             </li>
             <div class="video-container">
-                <video width="320" height="240" autoplay loop>
+                <video width="320" height="240" controls loop>
                     <source src="Images and Videos\Selfish -N-50.mp4" type="video/mp4">
                 </video>
             </div>
 
             <li>
                 <h3>Game of Life with Death Probability</h3>
-                <p>This file implements the Game of Life with modified rules where probability is introduced into the cell death
-                    and additional weighted masks are introduced to neighbors count. The Upgrade Grid function upgrades the
-                    rules inspired as mentioned in the paper by <a href="https://www.researchgate.net/publication/258113918_Self-controlled_growth_coherent_shrinkage_eternal_life_in_a_self-bounded_space_and_other_amazing_evolutionary_dynamics_of_stochastic_pattern_formation_and_growth_models_inspired_by_Conways_Game_of_Lif">Leonid Yaroslavsky </a>.</p>
-                <p>The modifications made to the standard Conway's model are done in two ways:</p>
+                <p>This file includes the implementation of the Game of Life with modifications that introduce the concept of probability is introduced into the event of cell deaths.
+                    Additionally, weighted masks are introduced to vary the influence of the neighbours in the total number of neighbours and hence, in the outcome of the cell's state. The Upgrade Grid function upgrades the
+                    rules as described and adopted from the paper by <a href="https://www.researchgate.net/publication/258113918_Self-controlled_growth_coherent_shrinkage_eternal_life_in_a_self-bounded_space_and_other_amazing_evolutionary_dynamics_of_stochastic_pattern_formation_and_growth_models_inspired_by_Conways_Game_of_Lif">Leonid Yaroslavsky </a>.</p>
+                <p>The new rules are defined as:</p>
                 <ol>
-                    <li>The "Deaths" of "live" cells are made stochastic with a certain probability 1/Pdeath, which is a model
-                        parameter.</li>
-                    <li>The number of "live" cells in the 8-neighborhood of each cell is counted using a weighted summation
-                        with rounding up the summation result instead of a simple summation of their binary values.</li>
+                    <li>The "Deaths" of "live" cells are made stochastic with a certain probability, Pdeath, which determines the likelihood of a live cell to die.</li>
+                    <li>The number of "live" cells in the 8-neighbourhood of each cell is counted using a weighted summation which is rounded up to determine the total neighbour count.</li>
                 </ol>
                 <p><strong>Features:</strong></p>
                 <ol>
-                    <li>The probability and mask can be given as input.</li>
-                    <li>Cells expand infinitely for some probabilities and can heal themselves.</li>
-                    <li>Can show some coherent growth properties.</li>
+                    <li>The probability of death and the weighted mask are requires as inputs for this simulation.</li>
+                    <li>Cells expand infinitely for some probabilities and demonstarte self-healing properties</li>
+                    <li>Some masks influence self-controlled growth in cells.</li>
                 </ol>
             </li>
             <div class="video-container">
-                <video width="320" height="240" autoplay loop>
+                <video width="320" height="240" controls loop>
                     <source src="Images and Videos\StandardMask.mp4" type="video/mp4">
                 </video>
             </div>
-            <p class="note"><strong>Note: </strong> The theoretical concepts of the modifications are adopted from existing literature and experimentation has been carried as detailed in the accompanying report. </p>
+            <p class="note"><strong>Note: </strong> The theoretical concepts of the modifications have been adopted from existing literature and experimentation has been carried as detailed in the accompanying report. </p>
         </ol>
 </div>
         
         
-        <!-- Add other "How to Play" sections similarly -->
     <div>
         <div class="installation-instructions">
             <h2>User Installation</h2>
@@ -300,10 +295,6 @@
                 <li><strong>matplotlib:</strong> Matplotlib is a comprehensive library for creating static, animated, and interactive visualizations in Python. It is used for plotting the generation vs. alive cells graph. Install matplotlib using pip.</li>
                 <li><strong>csv (optional):</strong> The csv module is used for reading and writing CSV files. It is used in one of the implementations to save data to a CSV file.</li>
             </ul>
-            <p>You can install the dependencies using pip, which is the package installer for Python. Open your terminal or command prompt and execute the following commands:</p>
-            <pre>pip install pygame numpy matplotlib</pre>
-            <p>If you choose to run the version that utilizes the <code>csv</code> module, you can install it with:</p>
-            <pre>pip install csv</pre>
 
             <h3>Installation Instructions</h3>
             <p>You can install the dependencies using pip, which is the package installer for Python. Open your terminal or command prompt and execute the following commands:</p>
@@ -327,30 +318,26 @@
         <h3>Game of Life (Original)</h3>
         <ul>
             <li>Run <code>GameOfLife_CustomPlace.py</code>.</li>
-            <li>Left-click to place live cells, right-click to remove.</li>
+            <li>Hold and drag left-click to place live cells, hold and drag right-click to remove cells.</li>
             <li>Press spacebar to start/stop the simulation.</li>
         </ul>
         <h3>Selfish Rules</h3>
     <ul>
         <li>Run <code>GameOfLife_SelfishRules.py</code>.</li>
-        <li>The cells exhibit selfish behavior with a specified level of selfishness.</li>
-        <li>Specify the level of selfishness when prompted.</li>
+        <li>Specify the percentage of selfish births when prompted.</li>
     </ul>
 
     <h3>Sacrifice Rules</h3>
     <ul>
         <li>Run <code>GameOfLife_SacrificeRules.py</code>.</li>
-        <li>The cells exhibit sacrifice behavior where they sacrifice themselves if they have a certain number of
-            neighbors.</li>
-        <li>Specify the number of neighbors for sacrifice when prompted.</li>
+        <li>Specify the number of neighbours required fora cell to sacrifice iself when prompted.</li>
     </ul>
    
 
     <h3>Probability of death</h3>
     <ul>
         <li>Run <code>GameOfLife_DeathProbability.py</code>.</li>
-        <li>Cells exhibit self-healing and self-controlled growth properties.</li>
-        <li>Specify the probability of cell death when prompted.</li>
+        <li>Specify the probability of cell death and the weighted mask when prompted.</li>
     </ul>
         </div>
         
